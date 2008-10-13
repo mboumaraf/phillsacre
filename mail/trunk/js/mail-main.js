@@ -102,7 +102,7 @@ Mail.Events.selectMessage = function(selectionModel, rowIndex, record) {
 			}
 			
 			header += '</table></div>';
-				
+			
 			Ext.getCmp('messagePane').body.update(header + '<div class="msg-body">' + result.body + '</div>');
 			Ext.getCmp('statusBar').reset();
 		}
@@ -260,13 +260,38 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 
 Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 	constructor: function(config) {
+		
+		var form = new Ext.form.FormPanel({
+			frame: true,
+			bodyStyle: 'padding: 5px 5px 0px',
+			labelWidth: 75,
+			labelAlign: 'right',
+			items: [
+				{
+					xtype: 'textfield',
+					fieldLabel: 'To',
+					name: 'to'
+				},
+				{
+					xtype: 'textfield',
+					fieldLabel: 'CC',
+					name: 'cc'
+				},
+				{
+					xtype: 'htmleditor',
+					id: 'message',
+					fieldLabel: 'Message',
+					height: 200
+				}
+			]
+		});
+		
 		config.title = 'Compose';
 		config.tbar = [
 			new Ext.Button({text: 'Send', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/send.png'})
 		];
-		config.layout = 'border';
 		config.items = [
-			new Ext.form.TextArea({ region: 'center', width: 500, height: 350 })
+			form
 		];
 		
 		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
