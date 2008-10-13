@@ -39,7 +39,7 @@ class MailService {
 			$result = $pop3->ListMessages("", 0);
 			
 			foreach ($result as $id => $size) {
-				//TODO: At some point we may want to handle large messages differently!
+				//TODO: At some point we may want to handle large messages differently
 				
 				// Get the raw message, as RetrieveMessage parses the headers
 				$raw = '';

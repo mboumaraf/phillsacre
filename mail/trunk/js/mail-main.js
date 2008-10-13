@@ -148,6 +148,13 @@ Mail.Events.deleteMessage = function() {
 	}
 };
 
+/**
+ * Shows the 'New Message' window.
+ */
+Mail.Events.composeMail = function() {
+	new Mail.Components.messageWindow({id: 'messageWindow'}).show();
+};
+
 /* === UTILS ====================================================== */
 
 /** 
@@ -218,6 +225,7 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		});
 		config.stripeRows = true;
 		config.tbar = [ 
+			new Ext.Button({text: 'Compose', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/compose.png', listeners: { click: this.compose } }),
 			new Ext.Button({text: 'Check for New Mail', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/sendreceive.png', listeners: { click: this.receiveMail } }), 
 			new Ext.Button({ text: 'Refresh', tooltip: 'Refresh message list from the server', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/refresh.png', listeners: { click: this.refresh } }) 
 		];
@@ -237,12 +245,31 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		this._store.load();
 	},
 	
+	compose: function() {
+		Mail.Events.composeMail();
+	},
+	
 	receiveMail: function () {
 		Mail.Events.receiveMail();
 	},
 	
 	refresh: function() {
 		this._store.reload();
+	}
+});
+
+Mail.Components.messageWindow = Ext.extend(Ext.Window, {
+	constructor: function(config) {
+		config.title = 'Compose';
+		config.tbar = [
+			new Ext.Button({text: 'Send', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/send.png'})
+		];
+		config.layout = 'border';
+		config.items = [
+			new Ext.form.TextArea({ region: 'center', width: 500, height: 350 })
+		];
+		
+		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
 	}
 });
 
