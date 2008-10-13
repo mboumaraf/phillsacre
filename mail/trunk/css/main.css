@@ -1,0 +1,68 @@
+/* === GLOBAL STYLES ===================== */
+
+body {
+	font-family: arial, tahoma, sans-serif;
+	font-size: 10pt;
+}
+
+fieldset {
+	border: 1px solid #FFA94F;
+}
+
+fieldset legend {
+	color: cornflowerblue;
+	font-weight: bold;
+}
+
+label {
+	font-weight: bold;
+}
+
+/* === HEADER ============================= */
+
+div#header {
+	color: navy;
+	font-size: 2em;
+	font-weight: bold;
+	border-bottom: 1px dotted gray;
+}
+
+/* === FOOTER ============================= */
+
+div#footer {
+	background: #eee;
+	text-align: center;
+	font-size: 0.8em;
+	padding: 4px;
+	color: #777;
+	border-top: 1px dotted gray;
+	margin-top: 10px;
+}
+
+/* === MESSAGES =========================== */
+
+div.msg-body {
+	padding: 5px;
+}
+
+div.msg-header {
+	padding: 4px;
+	background: #eee;
+	font-size: 0.8em;
+	border-bottom: 1px solid #555;
+}
+
+div.msg-header table {
+	font-size: 1em;
+}
+
+div.msg-header table td.label {
+	font-weight: bold;
+	padding-right: 10px;
+}
+
+/* === MESSAGE LIST ======================== */
+
+.unread  td {
+	font-weight: bold;
+}
