@@ -41,6 +41,14 @@ abstract class Controller extends Controller_Core {
 	protected function isLoggedIn() {
 		return $this->session->get('user') !== FALSE;
 	}
+	
+	/**
+	 * Encodes an object as JSON and outputs it to the browser.
+	 */
+	protected function outputJson($obj) {
+		header('Content-Type: text/plain');
+		echo json_encode($obj);
+	}
 }
 
 ?>

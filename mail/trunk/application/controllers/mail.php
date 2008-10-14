@@ -18,7 +18,15 @@ class Mail_Controller extends Controller {
 	}
 	
 	public function ajax_getMessages() {
-		$result = ORM::factory('message')->orderby('received_date')->find_all();
+		$folderId = $this->input->post('folderId', FALSE);
+		
+		if (empty($folderId) || $folderId === FALSE) {
+			$this->outputJson(array('messages' => array()));
+			return;
+		}
+		
+		$folder = new Folder_Model($folderId);
+		$result = $folder->orderby('received_date')->messages;
 		
 		$results = array();
 		
@@ -35,8 +43,7 @@ class Mail_Controller extends Controller {
 			);
 		}
 		
-		header('Content-Type: ' . JSON_MIME_TYPE);
-		echo json_encode(array('messages' => $results));
+		$this->outputJson(array('messages' => $results));
 	}
 	
 	public function ajax_getMessageBody() {
@@ -64,8 +71,7 @@ class Mail_Controller extends Controller {
 			'type' => $message->type
 		);
 		
-		header('Content-Type: ' . JSON_MIME_TYPE);
-		echo json_encode($result);
+		$this->outputJson($result);
 	}
 	
 	public function ajax_setRead() {
@@ -101,6 +107,7 @@ class Mail_Controller extends Controller {
 				}
 			}
 			
+			header('Content-Type: ' . JSON_MIME_TYPE);
 			$message->delete();
 		}
 		

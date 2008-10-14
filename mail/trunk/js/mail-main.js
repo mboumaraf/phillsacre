@@ -16,35 +16,12 @@ Mail.init = function() {
 	        autoHeight: true,
 	        border: false,
 	        margins: '0 0 5 0'
-	    }, {
-	        region: 'west',
-	        collapsible: true,
-	        title: 'Folders',
-	        xtype: 'treepanel',
-	        width: 200,
-	        autoScroll: true,
-	        split: true,
-	        loader: new Ext.tree.TreeLoader(),
-	        root: new Ext.tree.AsyncTreeNode({
-	            expanded: true,
-	            children: [{
-	                text: 'Menu Option 1',
-	                leaf: true
-	            }, {
-	                text: 'Menu Option 2',
-	                leaf: true
-	            }, {
-	                text: 'Menu Option 3',
-	                leaf: true
-	            }]
-	        }),
-	        rootVisible: false,
-	        listeners: {
-	            click: function(n) {
-	                Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + n.attributes.text + '"');
-	            }
-	        }
-	    },
+	    }, new Mail.Components.folderTree({
+			id: 'folderTree',
+			region: 'west',
+			collapsible: 'true',
+			split: true
+		}),
 		{
 			region: 'center',
 			layout: 'border',
@@ -155,6 +132,32 @@ Mail.Events.composeMail = function() {
 	new Mail.Components.messageWindow({id: 'messageWindow'}).show();
 };
 
+/**
+ * Handles a folder selection event. This should refresh
+ * the message list.
+ */
+Mail.Events.selectFolder = function(folderId) {
+	var ml = Ext.getCmp('messageList');
+	
+	ml.setFolderId(folderId);
+	ml.refresh();
+};
+
+/**
+ * Promps the user for a folder name and creates the folder.
+ */
+Mail.Events.newFolder = function(node) {
+	Ext.MessageBox.prompt('New Folder', 'Please enter the new folder name:', function(btn, text) {
+		if (btn == 'ok') {
+			var parentId = (node.id == 'root') ? '' : node.id;
+			
+			$.post(Mail.CONTEXT_PATH + 'folders/ajax_createFolder', { name: text, parentId: parentId }, function(result) {
+				Ext.getCmp('folderTree').refresh();
+			});
+		}
+	});
+}
+
 /* === UTILS ====================================================== */
 
 /** 
@@ -197,6 +200,7 @@ Mail.Components.messagePane = Ext.extend(Ext.Panel, {
  */
 Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 	_store: null,
+	_folderId: null,
 	
 	constructor: function(config) {
 		this._store = new Ext.data.JsonStore({
@@ -241,8 +245,6 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		config.store = this._store;
 		
 		Mail.Components.messageList.superclass.constructor.apply(this, arguments);
-		
-		this._store.load();
 	},
 	
 	compose: function() {
@@ -253,8 +255,13 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		Mail.Events.receiveMail();
 	},
 	
+	setFolderId: function(folderId) {
+		this._folderId = folderId;
+	},
+	
 	refresh: function() {
-		this._store.reload();
+		var fid = this._folderId;
+		this._store.reload({ params: { folderId: fid } });
 	}
 });
 
@@ -263,38 +270,116 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 		
 		var form = new Ext.form.FormPanel({
 			frame: true,
-			bodyStyle: 'padding: 5px 5px 0px',
-			labelWidth: 75,
-			labelAlign: 'right',
+			labelWidth: 30,
+			bodyStyle: 'padding: 5px',
 			items: [
 				{
 					xtype: 'textfield',
 					fieldLabel: 'To',
-					name: 'to'
+					name: 'to',
+					anchor: '100%'
 				},
 				{
 					xtype: 'textfield',
 					fieldLabel: 'CC',
-					name: 'cc'
+					name: 'cc',
+					anchor: '100%'
 				},
 				{
 					xtype: 'htmleditor',
-					id: 'message',
-					fieldLabel: 'Message',
-					height: 200
+					hideLabel: true,
+					name: 'message',
+					anchor: '100% -53'
 				}
 			]
 		});
 		
+		config.layout = 'fit';
 		config.title = 'Compose';
+		config.minWidth = 300;
+		config.minHeight = 200;
+		config.width = 600;
+		config.height = 500;
+		config.plain = true;
 		config.tbar = [
-			new Ext.Button({text: 'Send', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/send.png'})
+			new Ext.Button({text: 'Send', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/send.png'}),
+			new Ext.Button({text: 'Add Attachment', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/add_attachment.png'})
 		];
 		config.items = [
 			form
 		];
 		
 		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
+	}
+});
+
+/**
+ * Mail folder tree
+ */
+Mail.Components.folderTree = Ext.extend(Ext.tree.TreePanel, {
+	constructor: function(config) {
+		config.title = 'Folders';
+		config.autoScroll = true;
+		config.root = {
+			nodeType: 'async',
+			text: 'Local Folders',
+			expanded: true,
+			id: 'root'
+		};
+		config.dataUrl = Mail.CONTEXT_PATH + 'folders/ajax_getFolderList';
+		config.contextMenu = new Ext.menu.Menu({
+			items: [{ id: 'new-folder', text: 'New folder here', icon: Mail.CONTEXT_PATH + 'img/new-folder.png' }],
+			listeners: {
+				itemclick: function(item) {
+					switch(item.id) {
+						case 'new-folder':
+							Mail.Events.newFolder(item.parentMenu.contextNode);
+							break;
+					}
+				}
+			}
+		});
+		config.listeners = {
+			contextmenu: function(node, e) {
+				node.select();
+				var c = node.getOwnerTree().contextMenu;
+				c.contextNode = node;
+				c.showAt(e.getXY());
+			}
+		
+		};
+		config.enableDD = true;
+		config.dropConfig = { appendOnly: true };
+		config.listeners = { dragdrop: this.handleDrop };
+		
+		Mail.Components.statusBar.superclass.constructor.apply(this, arguments);
+		
+		this.getLoader().on('load', function() {
+			this.selectInbox();
+			this.getLoader().purgeListeners();
+		}, this);
+		
+		// The message list should be refreshed when the folder selection changes.
+		this.getSelectionModel().on('selectionchange', function(selectionModel, node) {
+			Mail.Events.selectFolder(node.id);
+		});
+	},
+	
+	selectInbox: function() {
+		var node = this.getRootNode().findChild('text', 'Inbox');
+		if (node !== null) {
+			this.getSelectionModel().select(node);
+		}
+	},
+	
+	handleDrop: function(panel, node, dd, e) {
+		alert('Handling drop');
+	},
+	
+	refresh: function() {
+		var path = this.getSelectionModel().getSelectedNode().getPath();
+		this.getRootNode().reload();
+		this.expandPath(path);
 	}
 });
 
