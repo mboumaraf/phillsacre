@@ -141,10 +141,22 @@ Mail.Events.selectFolder = function(folderId) {
 	
 	ml.setFolderId(folderId);
 	ml.refresh();
+	
+	Mail.Events.deselectMessage();
 };
 
 /**
- * Promps the user for a folder name and creates the folder.
+ * Moves a message to another folder.
+ */
+Mail.Events.moveMessage = function(messageId, folderId) {
+	$.post(Mail.CONTEXT_PATH + 'mail/ajax_moveMessage', { messageId: messageId, folderId: folderId }, function(result) {
+		Ext.getCmp('messageList').refresh();
+		Mail.Events.deselectMessage();
+	});
+};
+
+/**
+ * Prompts the user for a folder name and creates the folder.
  */
 Mail.Events.newFolder = function(node) {
 	Ext.MessageBox.prompt('New Folder', 'Please enter the new folder name:', function(btn, text) {
@@ -152,11 +164,58 @@ Mail.Events.newFolder = function(node) {
 			var parentId = (node.id == 'root') ? '' : node.id;
 			
 			$.post(Mail.CONTEXT_PATH + 'folders/ajax_createFolder', { name: text, parentId: parentId }, function(result) {
-				Ext.getCmp('folderTree').refresh();
+				node.reload();
 			});
 		}
 	});
-}
+};
+
+/** 
+ * Deletes the folder
+ */
+Mail.Events.deleteFolder = function(node) {
+	var id = node.id;
+	var name = node.text;
+	
+	var error = false;
+	
+	if (name == 'Inbox') {
+		error = 'You cannot delete the Inbox folder!';
+	}
+	else if (Ext.getCmp('messageList').getStore().getCount() > 0) {
+		error = 'This folder contains messages. Please move them before deleting the folder.';
+	}
+	
+	if (error) {
+		Ext.MessageBox.show({
+			buttons: Ext.MessageBox.OK,
+			msg: error,
+			title: 'Error',
+			icon: Ext.MessageBox.ERROR
+		});
+		
+		return;
+	}
+	
+	Ext.MessageBox.confirm('Confirm delete', 'Are you sure you want to delete the folder "' + name + '"?', function(btn) {
+		if (btn == 'yes') {
+			$.post(Mail.CONTEXT_PATH + 'folders/ajax_deleteFolder', { id: id }, function(result) {
+				if (result.success) {
+					node.parentNode.select();
+					node.remove();
+				}
+				else {
+					Ext.MessageBox.show({
+						buttons: Ext.MessageBox.OK,
+						msg: 'Could not delete folder: ' + result.errorMsg,
+						title: 'Error',
+						icon: Ext.MessageBox.ERROR
+					});
+				}
+			}, 'json');
+		}
+	});
+};
 
 /* === UTILS ====================================================== */
 
@@ -209,6 +268,7 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 			fields: [
 				'id', 
 				'account_id', 
+				'folder_id',
 				'recipient',
 				'sender', 
 				'sender_email', 
@@ -243,6 +303,9 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		];
 		config.sm = new Ext.grid.RowSelectionModel({singleSelect:true});
 		config.store = this._store;
+		config.enableDrag = true;
+		config.ddGroup = 'messageList';
+		config.ddText = '{0} selected message(s)';
 		
 		Mail.Components.messageList.superclass.constructor.apply(this, arguments);
 	},
@@ -328,29 +391,52 @@ Mail.Components.folderTree = Ext.extend(Ext.tree.TreePanel, {
 		};
 		config.dataUrl = Mail.CONTEXT_PATH + 'folders/ajax_getFolderList';
 		config.contextMenu = new Ext.menu.Menu({
-			items: [{ id: 'new-folder', text: 'New folder here', icon: Mail.CONTEXT_PATH + 'img/new-folder.png' }],
+			items: [
+				{ id: 'new-folder', text: 'New folder here', icon: Mail.CONTEXT_PATH + 'img/new-folder.png' },
+				{ id: 'delete-folder', text: 'Delete folder', icon: Mail.CONTEXT_PATH + 'img/delete.png' }
+			],
 			listeners: {
 				itemclick: function(item) {
 					switch(item.id) {
 						case 'new-folder':
 							Mail.Events.newFolder(item.parentMenu.contextNode);
 							break;
+						case 'delete-folder':
+							Mail.Events.deleteFolder(item.parentMenu.contextNode);
+							break;
 					}
 				}
 			}
 		});
 		config.listeners = {
-			contextmenu: function(node, e) {
+			'beforenodedrop': function(dropEvent) {
+				var data = dropEvent.data;
+				var node = dropEvent.target;
+				
+				for (var i=0; i < data.selections.length; i++) {
+					var selection = data.selections[i];
+					if (selection.data.folder_id == node.id) {
+						return false;
+					}
+					
+					Mail.Events.moveMessage(selection.data.id, node.id);
+				}
+			},
+			'contextmenu': function(node, e) {
 				node.select();
+				if (node.id == 'root' || node.text == 'Inbox') {
+					Ext.getCmp('delete-folder').disable();
+				}
+				else {
+					Ext.getCmp('delete-folder').enable();
+				}
 				var c = node.getOwnerTree().contextMenu;
 				c.contextNode = node;
 				c.showAt(e.getXY());
 			}
-		
 		};
-		config.enableDD = true;
-		config.dropConfig = { appendOnly: true };
-		config.listeners = { dragdrop: this.handleDrop };
+		config.enableDrop = true;
+		config.dropConfig = { appendOnly: true, ddGroup: 'messageList' };
 		
 		Mail.Components.statusBar.superclass.constructor.apply(this, arguments);
 		
@@ -368,12 +454,8 @@ Mail.Components.folderTree = Ext.extend(Ext.tree.TreePanel, {
 	selectInbox: function() {
 		var node = this.getRootNode().findChild('text', 'Inbox');
 		if (node !== null) {
-			this.getSelectionModel().select(node);
+			node.select();
 		}
-	},
-	
-	handleDrop: function(panel, node, dd, e) {
-		alert('Handling drop');
 	},
 	
 	refresh: function() {

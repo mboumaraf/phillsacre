@@ -34,6 +34,7 @@ class Mail_Controller extends Controller {
 			$results[] = array(
 				'id' => $message->id,
 				'account_id' => $message->account_id,
+				'folder_id' => $message->folder_id,
 				'recipient' => htmlentities($message->recipient),
 				'sender' => htmlentities($message->sender),
 				'received_date' => $message->received_date,
@@ -107,11 +108,30 @@ class Mail_Controller extends Controller {
 				}
 			}
 			
-			header('Content-Type: ' . JSON_MIME_TYPE);
 			$message->delete();
 		}
 		
-		echo '{success: true}';
+		$this->outputJson(array('success' => true));
+	}
+	
+	/**
+	 * Moves a message to another folder.
+	 */
+	public function ajax_moveMessage() {
+		$messageId = $this->input->post('messageId');
+		$folderId = $this->input->post('folderId');
+		
+		if (! empty($messageId) && ! empty($folderId)) {
+			$message = ORM::factory('message', $messageId);
+			$message->folder_id = $folderId;
+			
+			$message->save();
+			
+			$this->outputJson(array('success' => true));
+		}
+		else {
+			$this->outputJson(array('success' => false, 'errorMsg' => 'No message or folder provided'));
+		}
 	}
 	
 	/**

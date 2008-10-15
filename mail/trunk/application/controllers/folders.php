@@ -28,12 +28,24 @@ class Folders_Controller extends Controller {
 		
 		foreach ($result as $folder) {
 			$leaf = (sizeof($folder->children->as_array()) == 0 ? TRUE : FALSE);
-			$folders[] = array(
+			$data = array(
 				'id' => $folder->id,
-				//'leaf' => $leaf,
 				'text' => $folder->name,
-				'allowDrag' => ($folder->name == 'Inbox' ? FALSE : TRUE)
+				'allowDrag' => ($folder->name == 'Inbox' ? FALSE : TRUE),
+				'allowDrop' => TRUE
 			);
+			
+			// Setting a node as a leaf node will mean it cannot ever have children (without
+			// even the option of adopting or surrogacy). So, simulate a leaf node by giving
+			// it zero children initially.
+			if ($leaf) {
+				$data['children'] = array();
+				$data['allowChildren'] = TRUE;
+				$data['allowDrop'] = TRUE;
+				$data['expanded'] = TRUE;
+			}
+			
+			$folders[] = $data;
 		}
 		
 		$this->outputJson($folders);
@@ -60,6 +72,22 @@ class Folders_Controller extends Controller {
 		$folder->save();
 		
 		$this->outputJson(array('folderId' => $folder->id));
+	}
+	
+	function ajax_deleteFolder() {
+		$id = $this->input->post('id');
+		
+		if (! empty($id)) {
+			$folder = ORM::factory('folder', $id);
+			
+			if (sizeof($folder->messages) > 0) {
+				$this->outputJson(array('success' => FALSE, 'errorMsg' => 'Folder contains children'));
+			}
+			else {
+				$folder->delete();
+				$this->outputJson(array('success' => TRUE));
+			}
+		}
 	}
 }
 
