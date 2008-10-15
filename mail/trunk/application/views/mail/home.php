@@ -9,6 +9,8 @@
 <script src="<?= url::site('ext/ext-jquery-adapter.js') ?>"></script>
 <script src="<?= url::site('ext/ext-all.js') ?>"></script>
 <script src="<?= url::site('js/mail-main.js') ?>"></script>
+<script src="<?= url::site('js/component-messagelist.js') ?>"></script>
+<script src="<?= url::site('js/component-foldertree.js') ?>"></script>
 <script>
 
 Mail.CONTEXT_PATH = "<?= url::site() ?>";

@@ -53,7 +53,7 @@ Mail.Events.selectMessage = function(selectionModel, rowIndex, record) {
 	
 	if (read == 0) {
 		record.set('read', 1);
-		$.get(Mail.CONTEXT_PATH + 'mail/ajax_setRead', {id: id, read: 1}, function(result) { });
+		Mail.Events.markAsRead(id, 1);
 	}
 	
 	$.getJSON(Mail.CONTEXT_PATH + 'mail/ajax_getMessageBody', {id: id}, function(result) {
@@ -94,6 +94,22 @@ Mail.Events.selectMessage = function(selectionModel, rowIndex, record) {
  */ 
 Mail.Events.deselectMessage = function() {
 	Ext.getCmp('messagePane').body.update('');
+};
+
+/**
+ * Handles marking a message as read or unread.
+ */
+Mail.Events.markAsRead = function(messageId, read) {
+	$.get(Mail.CONTEXT_PATH + 'mail/ajax_setRead', {id: messageId, read: read}, function(result) { });
+	
+	// Update the unread count of the current folder
+	var tree = Ext.getCmp('folderTree');
+	var node = tree.getSelectionModel().getSelectedNode();
+	
+	if (node) {
+		var delta = (read == 0) ? 1 : -1;
+		tree.updateCurrentNodeUnread(delta);
+	}
 };
 
 /**
@@ -255,79 +271,8 @@ Mail.Components.messagePane = Ext.extend(Ext.Panel, {
 });
 
 /**
- * The Message List data grid.
+ * Compose Message window.
  */
-Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
-	_store: null,
-	_folderId: null,
-	
-	constructor: function(config) {
-		this._store = new Ext.data.JsonStore({
-			url: Mail.CONTEXT_PATH + '/mail/ajax_getMessages',
-			root: 'messages',
-			fields: [
-				'id', 
-				'account_id', 
-				'folder_id',
-				'recipient',
-				'sender', 
-				'sender_email', 
-				{name: 'received_date', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
-				'subject', 
-				'read', {name: 'attachments', type: 'int'}
-			]
-		});
-		
-		config.view = new Ext.grid.GridView({
-			forceFit: true,
-			getRowClass: function(row, index) {
-				if (row.data.read == 0) {
-					return 'unread';
-				}
-				return '';
-			}
-		});
-		config.stripeRows = true;
-		config.tbar = [ 
-			new Ext.Button({text: 'Compose', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/compose.png', listeners: { click: this.compose } }),
-			new Ext.Button({text: 'Check for New Mail', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/sendreceive.png', listeners: { click: this.receiveMail } }), 
-			new Ext.Button({ text: 'Refresh', tooltip: 'Refresh message list from the server', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/refresh.png', listeners: { click: this.refresh } }) 
-		];
-		config.autoScroll = true;
-		config.columns = [
-			{header:'', sortable: false, fixed: true, width: 18, dataIndex: 'attachments', renderer: function(value) { if (value > 0) return '<img src="' + Mail.CONTEXT_PATH + 'img/attachment.png"/>'; else return ''; } },
-			{header:'Subject', sortable: true, dataIndex: 'subject'},
-			{header:'To', sortable: true, dataIndex: 'recipient', hidden: true},
-			{header:'From', sortable: true, dataIndex: 'sender'},
-			{header:'Sent Date', sortable: true, dataIndex: 'received_date', renderer: Ext.util.Format.dateRenderer('d-M-Y H:i:s')}
-		];
-		config.sm = new Ext.grid.RowSelectionModel({singleSelect:true});
-		config.store = this._store;
-		config.enableDrag = true;
-		config.ddGroup = 'messageList';
-		config.ddText = '{0} selected message(s)';
-		
-		Mail.Components.messageList.superclass.constructor.apply(this, arguments);
-	},
-	
-	compose: function() {
-		Mail.Events.composeMail();
-	},
-	
-	receiveMail: function () {
-		Mail.Events.receiveMail();
-	},
-	
-	setFolderId: function(folderId) {
-		this._folderId = folderId;
-	},
-	
-	refresh: function() {
-		var fid = this._folderId;
-		this._store.reload({ params: { folderId: fid } });
-	}
-});
-
 Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 	constructor: function(config) {
 		
@@ -373,95 +318,6 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 		];
 		
 		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
-	}
-});
-
-/**
- * Mail folder tree
- */
-Mail.Components.folderTree = Ext.extend(Ext.tree.TreePanel, {
-	constructor: function(config) {
-		config.title = 'Folders';
-		config.autoScroll = true;
-		config.root = {
-			nodeType: 'async',
-			text: 'Local Folders',
-			expanded: true,
-			id: 'root'
-		};
-		config.dataUrl = Mail.CONTEXT_PATH + 'folders/ajax_getFolderList';
-		config.contextMenu = new Ext.menu.Menu({
-			items: [
-				{ id: 'new-folder', text: 'New folder here', icon: Mail.CONTEXT_PATH + 'img/new-folder.png' },
-				{ id: 'delete-folder', text: 'Delete folder', icon: Mail.CONTEXT_PATH + 'img/delete.png' }
-			],
-			listeners: {
-				itemclick: function(item) {
-					switch(item.id) {
-						case 'new-folder':
-							Mail.Events.newFolder(item.parentMenu.contextNode);
-							break;
-						case 'delete-folder':
-							Mail.Events.deleteFolder(item.parentMenu.contextNode);
-							break;
-					}
-				}
-			}
-		});
-		config.listeners = {
-			'beforenodedrop': function(dropEvent) {
-				var data = dropEvent.data;
-				var node = dropEvent.target;
-				
-				for (var i=0; i < data.selections.length; i++) {
-					var selection = data.selections[i];
-					if (selection.data.folder_id == node.id) {
-						return false;
-					}
-					
-					Mail.Events.moveMessage(selection.data.id, node.id);
-				}
-			},
-			'contextmenu': function(node, e) {
-				node.select();
-				if (node.id == 'root' || node.text == 'Inbox') {
-					Ext.getCmp('delete-folder').disable();
-				}
-				else {
-					Ext.getCmp('delete-folder').enable();
-				}
-				var c = node.getOwnerTree().contextMenu;
-				c.contextNode = node;
-				c.showAt(e.getXY());
-			}
-		};
-		config.enableDrop = true;
-		config.dropConfig = { appendOnly: true, ddGroup: 'messageList' };
-		
-		Mail.Components.statusBar.superclass.constructor.apply(this, arguments);
-		
-		this.getLoader().on('load', function() {
-			this.selectInbox();
-			this.getLoader().purgeListeners();
-		}, this);
-		
-		// The message list should be refreshed when the folder selection changes.
-		this.getSelectionModel().on('selectionchange', function(selectionModel, node) {
-			Mail.Events.selectFolder(node.id);
-		});
-	},
-	
-	selectInbox: function() {
-		var node = this.getRootNode().findChild('text', 'Inbox');
-		if (node !== null) {
-			node.select();
-		}
-	},
-	
-	refresh: function() {
-		var path = this.getSelectionModel().getSelectedNode().getPath();
-		this.getRootNode().reload();
-		this.expandPath(path);
 	}
 });
 

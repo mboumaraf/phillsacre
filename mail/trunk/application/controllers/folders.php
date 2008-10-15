@@ -27,12 +27,20 @@ class Folders_Controller extends Controller {
 		$folders = array();
 		
 		foreach ($result as $folder) {
-			$leaf = (sizeof($folder->children->as_array()) == 0 ? TRUE : FALSE);
+			$numChildren = sizeof($folder->children->as_array());
+			
+			$db = new Database();
+			$result = $db->select('count(*) num')->from('messages')->where(array('folder_id' => $folder->id, 'read' => 0))->get();
+			$arr = $result->result_array();
+			$numUnread = $arr[0]->num;
+			
+			$leaf = ($numChildren == 0 ? TRUE : FALSE);
 			$data = array(
 				'id' => $folder->id,
 				'text' => $folder->name,
 				'allowDrag' => ($folder->name == 'Inbox' ? FALSE : TRUE),
-				'allowDrop' => TRUE
+				'allowDrop' => TRUE,
+				'numUnread' => $numUnread
 			);
 			
 			// Setting a node as a leaf node will mean it cannot ever have children (without
@@ -81,11 +89,16 @@ class Folders_Controller extends Controller {
 			$folder = ORM::factory('folder', $id);
 			
 			if (sizeof($folder->messages) > 0) {
-				$this->outputJson(array('success' => FALSE, 'errorMsg' => 'Folder contains children'));
+				$this->outputJson(array('success' => FALSE, 'errorMsg' => 'Folder contains messages'));
 			}
 			else {
-				$folder->delete();
-				$this->outputJson(array('success' => TRUE));
+				try {
+					$folder->delete();
+					$this->outputJson(array('success' => TRUE));
+				}
+				catch (Exception $e) {
+					$this->outputJson(array('success' => FALSE, 'errorMsg' => 'A subfolder has messages in'));
+				}
 			}
 		}
 	}

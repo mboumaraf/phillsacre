@@ -66,3 +66,9 @@ div.msg-header table td.label {
 .unread  td {
 	font-weight: bold;
 }
+
+/* === FOLDER LIST ========================== */
+
+.folder-unread  {
+	font-weight: bold;
+}
