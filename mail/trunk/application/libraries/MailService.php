@@ -12,6 +12,7 @@ class MailService {
 	public function receiveMail($user) {
 		$accounts = $user->accounts;
 		$msgCount = 0;
+		$inbox = $this->getUserInbox($user);
 		
 		foreach ($accounts as $account) {
 			$pop3 = new pop3_class();
@@ -66,7 +67,7 @@ class MailService {
 				
 				// Process message during the loop so that, in the event of a large message,
 				// it's not hanging around in memory.
-				$this->processMessage($account, $id, $raw);
+				$this->processMessage($account, $inbox, $id, $raw);
 				$msgCount++;
 			}
 			
@@ -74,6 +75,13 @@ class MailService {
 		}
 		
 		return $msgCount;
+	}
+	
+	/**
+	 * Retrieve the 'Inbox' folder for the user
+	 */
+	private function getUserInbox($user) {
+		return ORM::factory('folder')->where(array('user_id' => $user->id, 'name' => 'Inbox'))->find();
 	}
 	
 	/** 
@@ -90,7 +98,7 @@ class MailService {
 	/**
 	 * Process a message given the raw data.
 	 */
-	private function processMessage($account, $index, $raw) {
+	private function processMessage($account, $inbox, $index, $raw) {
 		$headers = $this->parseMessageHeaders($raw, $body);
 				
 		$subject = array_key_exists('subject', $headers) ? $headers['subject'] : '';
@@ -98,6 +106,7 @@ class MailService {
 		
 		$message = new Message_Model();
 		$message->account_id = $account->id;
+		$message->folder_id = $inbox->id;
 		$message->server_index = $index;
 		$message->recipient = array_key_exists('to', $headers) ? $headers['to'] : '';
 		$message->sender = $from;

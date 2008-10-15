@@ -104,16 +104,12 @@ Mail.Events.markAsRead = function(messageId, read) {
 	
 	// Update the unread count of the current folder
 	var tree = Ext.getCmp('folderTree');
-	var node = tree.getSelectionModel().getSelectedNode();
-	
-	if (node) {
-		var delta = (read == 0) ? 1 : -1;
-		tree.updateCurrentNodeUnread(delta);
-	}
+	var delta = (read == 0) ? 1 : -1;
+	tree.updateCurrentNodeUnread(delta);
 };
 
 /**
- * Executes and "Send and Receive" function.
+ * Downloads new mail from the server.
  */
 Mail.Events.receiveMail = function() {
 	Ext.getCmp('statusBar').loading('Checking for new mail...');
@@ -121,6 +117,10 @@ Mail.Events.receiveMail = function() {
 	$.getJSON(Mail.CONTEXT_PATH + 'mail/ajax_receiveMail', null, function(result) {
 		Ext.getCmp('statusBar').reset();
 		Ext.getCmp('messageList').refresh();
+		
+		var tree = Ext.getCmp('folderTree');
+		var node = tree.getRootNode().findChild('text', 'Inbox');
+		tree.updateNodeUnread(node, result.msgCount);
 		
 		Ext.getCmp('statusBar').tempMessage(result.msgCount + ' new messages');
 	});

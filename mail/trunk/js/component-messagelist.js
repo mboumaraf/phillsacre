@@ -50,7 +50,10 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 		config.ddGroup = 'messageList';
 		config.ddText = '{0} selected message(s)';
 		config.contextMenu = new Ext.menu.Menu({
-			items: [ { id: 'mark-as-unread', text: 'Mark as Unread', icon: Mail.CONTEXT_PATH + 'img/unread.png' } ],
+			items: [ 
+				{ id: 'mark-as-unread', text: 'Mark as Unread', icon: Mail.CONTEXT_PATH + 'img/unread.png' },
+				{ id: 'delete-message', text: 'Delete', icon: Mail.CONTEXT_PATH + 'img/delete.png' }
+			],
 			listeners: {
 				itemclick: function(item) {
 					var grid = this.grid;
@@ -60,6 +63,9 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 							var record = grid.getStore().getAt(rowIndex);
 							Mail.Events.markAsRead(record.get('id'), 0);
 							record.set('read', 0);
+							break;
+						case 'delete-message':
+							Mail.Events.deleteMessage();
 							break;
 					}
 				}
