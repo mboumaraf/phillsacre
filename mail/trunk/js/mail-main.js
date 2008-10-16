@@ -278,57 +278,6 @@ Mail.Components.messagePane = Ext.extend(Ext.Panel, {
 });
 
 /**
- * Compose Message window.
- */
-Mail.Components.messageWindow = Ext.extend(Ext.Window, {
-	constructor: function(config) {
-		
-		var form = new Ext.form.FormPanel({
-			frame: true,
-			labelWidth: 30,
-			bodyStyle: 'padding: 5px',
-			items: [
-				{
-					xtype: 'textfield',
-					fieldLabel: 'To',
-					name: 'to',
-					anchor: '100%'
-				},
-				{
-					xtype: 'textfield',
-					fieldLabel: 'CC',
-					name: 'cc',
-					anchor: '100%'
-				},
-				{
-					xtype: 'htmleditor',
-					hideLabel: true,
-					name: 'message',
-					anchor: '100% -53'
-				}
-			]
-		});
-		
-		config.layout = 'fit';
-		config.title = 'Compose';
-		config.minWidth = 300;
-		config.minHeight = 200;
-		config.width = 600;
-		config.height = 500;
-		config.plain = true;
-		config.tbar = [
-			new Ext.Button({text: 'Send', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/send.png'}),
-			new Ext.Button({text: 'Add Attachment', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/add_attachment.png'})
-		];
-		config.items = [
-			form
-		];
-		
-		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
-	}
-});
-
-/**
  * Status Panel
  */
 Mail.Components.statusBar = Ext.extend(Ext.StatusBar, {

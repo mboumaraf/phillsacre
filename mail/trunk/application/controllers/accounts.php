@@ -10,12 +10,23 @@ class Accounts_Controller extends Controller {
 		}
 	}
 	
-	public function add() {
+	/**
+	 * Retrieve all accounts for a user.
+	 */
+	public function ajax_getAccounts() {
+		$user = $this->session->get('user');
 		
-	}
-	
-	public function view() {
-	
+		$accounts = array();
+		
+		foreach($user->orderby('name')->accounts as $account) {
+			$accounts[] = array(
+				'id' => $account->id,
+				'name' => $account->name,
+				'email_address' => $account->email_address
+			);
+		}
+		
+		$this->outputJson(array('accounts' => $accounts));
 	}
 }
 

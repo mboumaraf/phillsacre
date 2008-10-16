@@ -135,6 +135,24 @@ class Mail_Controller extends Controller {
 	}
 	
 	/**
+	 * Sends an email.
+	 */
+	public function ajax_sendMail() {
+		$accountId = $this->input->post('account');
+		$to = $this->input->post('to');
+		$cc = $this->input->post('cc');
+		$subject = $this->input->post('subject');
+		$message = $this->input->post('message');
+		$format = $this->input->post('format');
+		
+		$account = ORM::factory('account', $accountId);
+		
+		email::send($to, $account->email_address, $subject, $message, ($format == 'html'));
+		
+		$this->outputJson(array('success' => TRUE));
+	}
+	
+	/**
 	 * Parses an HTML message body for links to attachments, and replaces them with the 
 	 * appropriate URLs. Also blocks remote images.
 	 */

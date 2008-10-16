@@ -7,7 +7,7 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 	
 	constructor: function(config) {
 		this._store = new Ext.data.JsonStore({
-			url: Mail.CONTEXT_PATH + '/mail/ajax_getMessages',
+			url: Mail.CONTEXT_PATH + 'mail/ajax_getMessages',
 			root: 'messages',
 			fields: [
 				'id', 
@@ -18,7 +18,8 @@ Mail.Components.messageList = Ext.extend(Ext.grid.GridPanel, {
 				'sender_email', 
 				{name: 'received_date', type: 'date', dateFormat: 'Y-m-d H:i:s'}, 
 				'subject', 
-				'read', {name: 'attachments', type: 'int'}
+				'read', 
+				{name: 'attachments', type: 'int'}
 			]
 		});
 		
