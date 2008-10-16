@@ -77,9 +77,13 @@ class Folders_Controller extends Controller {
 		$folder->user_id = $this->session->get('user')->id;
 		$folder->parent_id = $parentId;
 		
-		$folder->save();
-		
-		$this->outputJson(array('folderId' => $folder->id));
+		try {
+			$folder->save();
+			$this->outputJson(array('success' => TRUE, 'folderId' => $folder->id));
+		}
+		catch (Exception $e) {
+			$this->outputJson(array('success' => FALSE, 'errorMsg' => 'Folder with that name already exists'));
+		}
 	}
 	
 	function ajax_deleteFolder() {

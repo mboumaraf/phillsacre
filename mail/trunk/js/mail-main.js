@@ -180,8 +180,13 @@ Mail.Events.newFolder = function(node) {
 			var parentId = (node.id == 'root') ? '' : node.id;
 			
 			$.post(Mail.CONTEXT_PATH + 'folders/ajax_createFolder', { name: text, parentId: parentId }, function(result) {
-				node.reload();
-			});
+				if (result.success) {
+					node.reload();
+				}
+				else {
+					Mail.Utils.showError(result.errorMsg);
+				}
+			}, 'json');
 		}
 	});
 };
@@ -203,12 +208,7 @@ Mail.Events.deleteFolder = function(node) {
 	}
 	
 	if (error) {
-		Ext.MessageBox.show({
-			buttons: Ext.MessageBox.OK,
-			msg: error,
-			title: 'Error',
-			icon: Ext.MessageBox.ERROR
-		});
+		Mail.Utils.showError(error);
 		
 		return;
 	}
@@ -221,12 +221,7 @@ Mail.Events.deleteFolder = function(node) {
 					node.remove();
 				}
 				else {
-					Ext.MessageBox.show({
-						buttons: Ext.MessageBox.OK,
-						msg: 'Could not delete folder: ' + result.errorMsg,
-						title: 'Error',
-						icon: Ext.MessageBox.ERROR
-					});
+					Mail.Utils.showError('Could not delete folder: ' + result.errorMsg);
 				}
 			}, 'json');
 		}
@@ -234,6 +229,18 @@ Mail.Events.deleteFolder = function(node) {
 };
 
 /* === UTILS ====================================================== */
+
+/**
+ * Displays an error message to the user.
+ */
+Mail.Utils.showError = function(error) {
+	Ext.MessageBox.show({
+		buttons: Ext.MessageBox.OK,
+		msg: error,
+		title: 'Error',
+		icon: Ext.MessageBox.ERROR
+	});
+};
 
 /** 
  * Utility function to convert an amount in bytes to a human-readable amount.
