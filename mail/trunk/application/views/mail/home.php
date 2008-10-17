@@ -12,6 +12,7 @@
 <script src="<?= url::site('js/component-messagelist.js') ?>"></script>
 <script src="<?= url::site('js/component-foldertree.js') ?>"></script>
 <script src="<?= url::site('js/component-messagewindow.js') ?>"></script>
+<script src="<?= url::site('js/component-accountswindow.js') ?>"></script>
 <script>
 
 Mail.CONTEXT_PATH = "<?= url::site() ?>";

@@ -15,7 +15,7 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 		this.form = new Ext.form.FormPanel({
 			frame: true,
 			labelWidth: 55,
-			bodyStyle: 'padding: 5px',
+			bodyStyle: 'padding: 5px;',
 			url: Mail.CONTEXT_PATH + 'mail/ajax_sendMail',
 			items: [
 				this.accountCombo = new Ext.form.ComboBox({
@@ -55,7 +55,7 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 					id: 'msg-editor-html',
 					hideLabel: true,
 					name: 'message',
-					anchor: '100% -53'
+					anchor: '100% 0',
 				}
 			]
 		});
@@ -83,7 +83,7 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 				}
 			]
 		});
-		
+
 		config.layout = 'fit';
 		config.title = 'Compose';
 		config.minWidth = 300;

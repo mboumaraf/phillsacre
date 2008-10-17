@@ -8,29 +8,59 @@ $(document).ready(function() {
  * Initialisation function for the app.
  */
 Mail.init = function() {
+	var toolsMenu = new Ext.menu.Menu({
+		items: [
+			{
+				text: 'Manage Accounts',
+				action: 'accounts'
+			}
+		],
+		listeners: {
+			itemclick: function(baseItem, e) {
+				switch(baseItem.action) {
+					case 'accounts':
+						Mail.Events.editAccounts();
+						break;
+				}
+			}
+		}
+	});
+	
 	new Ext.Viewport({
 	    layout: 'border',
-	    items: [{
-	        region: 'north',
-	        html: '<h1 class="x-panel-header">Mail</h1>',
-	        autoHeight: true,
-	        border: false,
-	        margins: '0 0 5 0'
-	    }, new Mail.Components.folderTree({
-			id: 'folderTree',
-			region: 'west',
-			collapsible: 'true',
-			split: true
-		}),
-		{
-			region: 'center',
-			layout: 'border',
-			items: [
-				new Mail.Components.messageList({id: 'messageList', region: 'north', split: 'true', height: 200 }),
-				new Mail.Components.messagePane({id: 'messagePane', region: 'center', autoScroll: true })
-			]
-		},
-		new Mail.Components.statusBar({id: 'statusBar', region: 'south'})]
+		items: [
+			{
+				region: 'north',
+				html: '<h1 class="x-panel-header">Mail</h1>',
+				autoHeight: true,
+				border: false,
+				margins: '0 0 5 0'
+			},
+			new Ext.Panel({
+				layout: 'border',
+				region: 'center',
+				items: [
+					new Mail.Components.folderTree({
+						id: 'folderTree',
+						region: 'west',
+						collapsible: 'true',
+						split: true
+					}),
+					{
+						region: 'center',
+						layout: 'border',
+						items: [
+							new Mail.Components.messageList({id: 'messageList', region: 'north', split: 'true', height: 200 }),
+							new Mail.Components.messagePane({id: 'messagePane', region: 'center', autoScroll: true })
+						]
+					},
+					new Mail.Components.statusBar({id: 'statusBar', region: 'south'})
+				],
+				tbar: [
+					new Ext.Button({text: 'Tools', menu: toolsMenu})
+				]
+			})
+		]
 	});
 	
 	Ext.getCmp('messageList').getSelectionModel().on({
@@ -226,6 +256,13 @@ Mail.Events.deleteFolder = function(node) {
 			}, 'json');
 		}
 	});
+};
+
+/**
+ * Shows the 'edit accounts' window.
+ */
+Mail.Events.editAccounts = function() {
+	new Mail.Components.accountsWindow({ id: 'accounts-window' }).show();
 };
 
 /* === UTILS ====================================================== */

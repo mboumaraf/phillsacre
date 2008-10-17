@@ -22,7 +22,11 @@ class Accounts_Controller extends Controller {
 			$accounts[] = array(
 				'id' => $account->id,
 				'name' => $account->name,
-				'email_address' => $account->email_address
+				'email_address' => $account->email_address,
+				'host_name' => $account->host_name,
+				'port' => $account->port,
+				'username' => $account->username,
+				'password' => $account->password
 			);
 		}
 		
