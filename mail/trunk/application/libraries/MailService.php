@@ -106,6 +106,7 @@ class MailService {
 		
 		$message = new Message_Model();
 		$message->account_id = $account->id;
+		$message->user_id = $account->user->id;
 		$message->folder_id = $inbox->id;
 		$message->server_index = $index;
 		$message->recipient = array_key_exists('to', $headers) ? $headers['to'] : '';

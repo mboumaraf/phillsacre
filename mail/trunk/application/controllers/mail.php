@@ -34,6 +34,7 @@ class Mail_Controller extends Controller {
 			$results[] = array(
 				'id' => $message->id,
 				'account_id' => $message->account_id,
+				'user_id' => $message->user_id,
 				'folder_id' => $message->folder_id,
 				'recipient' => htmlentities($message->recipient),
 				'sender' => htmlentities($message->sender),
@@ -92,8 +93,7 @@ class Mail_Controller extends Controller {
 		$service = new MailService();
 		$msgCount = $service->receiveMail($this->session->get('user'));
 		
-		header('Content-Type: ' . JSON_MIME_TYPE);
-		echo '{msgCount:' . $msgCount . '}';
+		$this->outputJson(array('msgCount' => $msgCount));
 	}
 
 	public function ajax_deleteMessage() {

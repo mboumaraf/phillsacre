@@ -30,17 +30,46 @@ Mail.Components.accountsWindow = Ext.extend(Ext.Window, {
 				stripeRows: true,
 				autoScroll: true,
 				sm: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-				listeners: { rowclick: this.editAccount.createDelegate(this) }
+				listeners: { 
+					rowclick: this.editAccount.createDelegate(this),
+					rowcontextmenu: function(grid, rowIndex, e) {
+						var c = grid.contextMenu;
+						grid.getSelectionModel().selectRow(rowIndex);
+						
+						c.grid = grid;
+						c.showAt(e.getXY());
+						e.stopEvent();
+					}
+				},
+				contextMenu: new Ext.menu.Menu({
+					items: [
+						{ id: 'delete-account', text: 'Delete', icon: Mail.CONTEXT_PATH + 'img/delete.png' }
+					],
+					listeners: {
+						itemclick: function(item) {
+							var grid = this.grid;
+							
+							switch (item.id) {
+								case 'delete-account':
+									var record = grid.getSelectionModel().getSelected();
+									Mail.Events.deleteAccount(record.get('id'));
+									grid.getStore().reload();
+									break;
+							}
+						}
+					}
+				})
 			}),
 			this.form = new Ext.form.FormPanel({
 				region: 'south',
 				labelWidth: 100,
 				bodyStyle: 'padding: 5px;',
-				height: 200,
+				height: 220,
 				frame: true,
-				tbar: [
-					new Ext.Button({ text: 'New Account', handler: this.newAccount.createDelegate(this) }),
-					new Ext.Button({ text: 'Save' })
+				url: Mail.CONTEXT_PATH + 'accounts/ajax_saveAccount',
+				buttons: [
+					new Ext.Button({ text: 'Save', handler: this.saveAccount.createDelegate(this) }),
+					new Ext.Button({ text: 'New Account', handler: this.newAccount.createDelegate(this) })
 				],
 				items: [
 					{
@@ -50,24 +79,32 @@ Mail.Components.accountsWindow = Ext.extend(Ext.Window, {
 						xtype: 'textfield',
 						fieldLabel: 'Name',
 						name: 'name',
-						anchor: '100%'
+						anchor: '100%',
+						allowBlank: false
 					},
 					{
 						xtype: 'textfield',
 						fieldLabel: 'Email Address',
 						name: 'email_address',
-						anchor: '100%'
+						anchor: '100%',
+						regex: /.+@.+\..+/,
+						regexText: 'Invalid email address',
+						allowBlank: false
 					},
 					{
 						xtype: 'textfield',
 						fieldLabel: 'Host Name',
 						name: 'host_name',
-						anchor: '100%'
+						anchor: '100%',
+						allowBlank: false
 					}, {
 						xtype: 'textfield',
 						fieldLabel: 'Port',
 						name: 'port',
-						anchor: '100%'
+						anchor: '100%',
+						value: '110',
+						maskRe: /[0-9]/,
+						allowBlank: false
 					}, {
 						xtype: 'textfield',
 						fieldLabel: 'Username',
@@ -87,6 +124,25 @@ Mail.Components.accountsWindow = Ext.extend(Ext.Window, {
 		Mail.Components.accountsWindow.superclass.constructor.apply(this, arguments);
 		
 		this.store.load();
+	},
+	
+	/**
+	 * Saves the account.
+	 */
+	saveAccount: function() {
+		this.form.getForm().submit({
+			success: function(form, action) {
+				if (action.result.success == true) {
+					this.refresh();
+				}
+				else {
+					Mail.utils.showError(action.result.errorMsg);
+				}
+			}.createDelegate(this),
+			failure: function(form, action) {
+				Mail.utils.showError(action.result.errorMsg);
+			}
+		});
 	},
 	
 	/**
@@ -117,9 +173,16 @@ Mail.Components.accountsWindow = Ext.extend(Ext.Window, {
 			name: '',
 			email_address: '',
 			host_name: '',
-			port: '',
+			port: '110',
 			username: '',
 			password: ''
 		});
+	},
+	
+	/**
+	 * Refreshes the accounts list
+	 */
+	refresh: function() {
+		this.store.reload();
 	}
 });

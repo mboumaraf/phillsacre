@@ -8,6 +8,8 @@ $(document).ready(function() {
  * Initialisation function for the app.
  */
 Mail.init = function() {
+	Ext.QuickTips.init();
+	
 	var toolsMenu = new Ext.menu.Menu({
 		items: [
 			{
@@ -263,6 +265,21 @@ Mail.Events.deleteFolder = function(node) {
  */
 Mail.Events.editAccounts = function() {
 	new Mail.Components.accountsWindow({ id: 'accounts-window' }).show();
+};
+
+/**
+ * Deletes an account.
+ */
+Mail.Events.deleteAccount = function(id) {
+	$.post(Mail.CONTEXT_PATH + 'accounts/ajax_deleteAccount', { id: id }, function(result) {
+		console.log(result);
+		if (! result.success) {
+			Mail.utils.showError(result.errorMsg);
+		}
+		else {
+			Ext.getCmp('accounts-window').refresh();
+		}
+	}, 'json');
 };
 
 /* === UTILS ====================================================== */

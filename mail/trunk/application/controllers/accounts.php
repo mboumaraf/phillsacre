@@ -30,7 +30,77 @@ class Accounts_Controller extends Controller {
 			);
 		}
 		
-		$this->outputJson(array('accounts' => $accounts));
+		$this->outputJson(array('success' => TRUE, 'accounts' => $accounts));
+	}
+	
+	/**
+	 * Saves an account.
+	 */
+	public function ajax_saveAccount() {
+		$user = $this->session->get('user');
+		
+		$id = $this->input->post('id');
+		
+		if (! empty($id) ) {
+			$account = ORM::factory('account', $id);
+			
+			if ($user->id != $account->user_id) {
+				$this->jsonError('Authorisation failure');
+			}
+		}
+		else {
+			$account = new Account_Model();
+		}
+
+		$account->user_id = $user->id;
+		$account->name = $this->input->post('name');
+		$account->email_address = $this->input->post('email_address');
+		$account->host_name = $this->input->post('host_name');
+		$account->port = $this->input->post('port');
+		$account->username = $this->input->post('username');
+		$account->password = $this->input->post('password');
+		
+		if (! is_numeric($account->port) ) {
+			$account->port = 110;
+		}
+		
+		try {
+			$account->save();
+			
+			$this->outputJson(array('success' => TRUE));
+		}
+		catch (Exception $e) {
+			$this->jsonError($e->getMessage());
+		}
+	}
+	
+	/**
+	 * Deletes an account.
+	 */
+	public function ajax_deleteAccount() {
+		$id = $this->input->post('id');
+		
+		$user = $this->session->get('user');
+		
+		if (! empty($id) ) {
+			try {
+				$account = ORM::factory('account', $id);
+				
+				if ($user->id != $account->user_id) {
+					$this->jsonError('Authorisation failure');
+				}
+				
+				$account->delete();
+				
+				$this->outputJson(array('success' => TRUE));
+			}
+			catch (Exception $e) {
+				$this->jsonError($e->getMessage());
+			}
+		}
+		else {
+			$this->jsonError('No account ID specified');
+		}
 	}
 }
 

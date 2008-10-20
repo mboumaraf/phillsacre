@@ -49,6 +49,14 @@ abstract class Controller extends Controller_Core {
 		header('Content-Type: text/plain');
 		echo json_encode($obj);
 	}
+	
+	/**
+	 * Outputs a JSON error and then stops the script.
+	 */
+	protected function jsonError($msg) {
+		$this->outputJson(array('success' => FALSE, 'errorMsg' => $msg));
+		die();
+	}
 }
 
 ?>
