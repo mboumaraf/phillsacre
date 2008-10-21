@@ -177,7 +177,35 @@ Mail.Events.deleteMessage = function() {
  * Shows the 'New Message' window.
  */
 Mail.Events.composeMail = function() {
+	if (! Mail.Utils.closeMessageWindow() ) {
+		return;
+	}
+	
 	new Mail.Components.messageWindow({id: 'messageWindow'}).show();
+};
+
+/**
+ * Shows the 'New Message' window in reply to an existing message (i.e. the currently selected message)
+ */
+Mail.Events.reply = function() {
+	if (! Mail.Utils.closeMessageWindow()) {
+		return;
+	}
+	
+	var mw = new Mail.Components.messageWindow({id: 'messageWindow'});
+	mw.show();
+};
+
+/**
+ * Shows the 'New Message' window in reply to all recipients of an existing message.
+ */
+Mail.Events.replyAll = function() {
+	if (!Mail.Utils.closeMessageWindow()) {
+		return;
+	}
+	
+	var mw = new Mail.Components.messageWindow({id: 'messageWindow'});
+	mw.show();
 };
 
 /**
@@ -285,6 +313,22 @@ Mail.Events.deleteAccount = function(id) {
 /* === UTILS ====================================================== */
 
 /**
+ * Closes the message window if it is open. Returns true if the window was successfully closed.
+ */
+Mail.Utils.closeMessageWindow = function() {
+	var win = Ext.getCmp('messageWindow');
+	if (win) {
+		win.close();
+	}
+	
+	if (Ext.getCmp('messageWindow')) {
+		return false;
+	}
+	
+	return true;
+};
+
+/**
  * Displays an error message to the user.
  */
 Mail.Utils.showError = function(error) {
@@ -323,8 +367,8 @@ Mail.Utils.displaySize = function(bytes) {
 Mail.Components.messagePane = Ext.extend(Ext.Panel, {
 	constructor: function(config) {
 		config.tbar = [
-			this.replyBtn = new Ext.Button({text: 'Reply', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/reply.png', tooltip: 'Reply to this message'}),
-			this.replyAllBtn = new Ext.Button({text: 'Reply to All', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/replyall.png', tooltip: 'Reply to all recipients of this message'}),
+			this.replyBtn = new Ext.Button({text: 'Reply', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/reply.png', tooltip: 'Reply to this message', handler: Mail.Events.reply }),
+			this.replyAllBtn = new Ext.Button({text: 'Reply to All', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/replyall.png', tooltip: 'Reply to all recipients of this message', handler: Mail.Events.replyAll }),
 			this.deleteBtn = new Ext.Button({text: 'Delete', cls: 'x-btn-text-icon', icon: Mail.CONTEXT_PATH + 'img/delete.png', tooltip: 'Delete this message', listeners: { click: Mail.Events.deleteMessage } })
 		];
 		Mail.Components.messagePane.superclass.constructor.apply(this, arguments);

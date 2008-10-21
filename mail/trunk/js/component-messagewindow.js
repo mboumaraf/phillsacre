@@ -99,6 +99,9 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 		config.items = [
 			this.form
 		];
+		config.listeners = {
+			beforeclose: this.closeWindow.createDelegate(this)
+		};
 		
 		Mail.Components.messageWindow.superclass.constructor.apply(this, arguments);
 		
@@ -144,6 +147,23 @@ Mail.Components.messageWindow = Ext.extend(Ext.Window, {
 			}
 			else {
 				this.format = 'text';
+			}
+		}
+	},
+	
+	/**
+	 * Closes the window.
+	 */
+	closeWindow: function() {
+		var vals = this.form.getForm().getValues();
+		
+		if (! this.reallyClose && vals.message != '') {
+			if (confirm('Are you sure?', 'Are you sure you want to lose this message?')) {
+				this.reallyClose = true;
+				this.close();
+			}
+			else {
+				return false;
 			}
 		}
 	}
