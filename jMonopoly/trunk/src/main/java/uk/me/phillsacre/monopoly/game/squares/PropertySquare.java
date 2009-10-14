@@ -10,6 +10,8 @@ public class PropertySquare extends GameSquare
     private Player       _owner;
     private SquareGroup  _group;
     private RentStrategy _rentStrategy;
+    private Integer      _numHouses;
+    private Integer      _numHotels;
 
 
     /**
@@ -71,6 +73,48 @@ public class PropertySquare extends GameSquare
     public void setRentStrategy( RentStrategy rentStrategy )
     {
         _rentStrategy = rentStrategy;
+    }
+
+    /**
+     * @return the rentStrategy
+     */
+    public RentStrategy getRentStrategy()
+    {
+        return _rentStrategy;
+    }
+
+    /**
+     * @return the numHouses
+     */
+    public Integer getNumHouses()
+    {
+        return _numHouses;
+    }
+
+    /**
+     * @param numHouses
+     *            the numHouses to set
+     */
+    public void setNumHouses( Integer numHouses )
+    {
+        _numHouses = numHouses;
+    }
+
+    /**
+     * @return the numHotels
+     */
+    public Integer getNumHotels()
+    {
+        return _numHotels;
+    }
+
+    /**
+     * @param numHotels
+     *            the numHotels to set
+     */
+    public void setNumHotels( Integer numHotels )
+    {
+        _numHotels = numHotels;
     }
 
     @Override

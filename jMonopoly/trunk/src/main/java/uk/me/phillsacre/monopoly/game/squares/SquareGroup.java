@@ -6,15 +6,15 @@ import java.util.List;
 
 public class SquareGroup
 {
-    private String           _id;
-    private String           _colour;
-    private List<GameSquare> _squares;
+    private String               _id;
+    private String               _colour;
+    private List<PropertySquare> _squares;
 
 
     public SquareGroup( String id )
     {
         _id = id;
-        _squares = new ArrayList<GameSquare>();
+        _squares = new ArrayList<PropertySquare>();
     }
 
     public String getId()
@@ -39,7 +39,7 @@ public class SquareGroup
         _colour = colour;
     }
 
-    public List<GameSquare> getSquares()
+    public List<PropertySquare> getSquares()
     {
         return _squares;
     }

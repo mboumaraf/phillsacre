@@ -28,6 +28,7 @@ import uk.me.phillsacre.monopoly.game.squares.actions.IncomeTaxAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.JailAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.PropertyAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.SuperTaxAction;
+import uk.me.phillsacre.monopoly.game.squares.rent.StationRentStrategy;
 
 
 public class GameDataLoader
@@ -135,6 +136,17 @@ public class GameDataLoader
             prop.setName( squareElt.getChildText( "name" ) );
             prop.setValue( Integer.valueOf( squareElt.getChildText( "value" ) ) );
             prop.setGroup( _gameData.getGroups().get( groupId ) );
+
+            Element rentChild = squareElt.getChild( "rent" );
+            String rentType = rentChild.getAttributeValue( "type" );
+            if ("station".equals( rentType ))
+            {
+                prop.setRentStrategy( new StationRentStrategy() );
+            }
+            else if ("default".equals( rentType ))
+            {
+                prop.setRentStrategy( new DefaultRentStategy() );
+            }
 
             square = prop;
         }

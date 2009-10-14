@@ -5,6 +5,7 @@
 			<name>Old Kent Road</name>
 			<value>60</value>
 			<group>brown</group>
+			<rent type="default" />
 		</square>
 		<square type="community-chest" />
 		<square type="property">
@@ -19,6 +20,7 @@
 			<name>Kings Cross Station</name>
 			<value>200</value>
 			<group>stations</group>
+			<rent type="station" />
 		</square>
 		<square type="property">
 			<name>The Angel, Islington</name>
@@ -61,6 +63,7 @@
 			<name>Marylebone Station</name>
 			<value>200</value>
 			<group>stations</group>
+			<rent type="station" />
 		</square>
 		<square type="property">
 			<name>Bow Street</name>
@@ -99,6 +102,7 @@
 			<name>Fenchurch Street Station</name>
 			<value>200</value>
 			<group>stations</group>
+			<rent type="station" />
 		</square>
 		<square type="property">
 			<name>Leicester Square</name>
@@ -141,6 +145,7 @@
 			<name>Liverpool Street Station</name>
 			<value>200</value>
 			<group>stations</group>
+			<rent type="station" />
 		</square>
 		<square type="chance" />
 		<square type="property">
