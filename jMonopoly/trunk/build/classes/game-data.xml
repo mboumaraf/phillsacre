@@ -1,0 +1,185 @@
+<monopoly>
+	<squares>
+		<square type="go" />
+		<square type="property">
+			<name>Old Kent Road</name>
+			<value>60</value>
+			<group>brown</group>
+		</square>
+		<square type="community-chest" />
+		<square type="property">
+			<name>Whitechapel Road</name>
+			<value>60</value>
+			<group>brown</group>
+		</square>
+		<square type="income-tax">
+			<value>200</value>
+		</square>
+		<square type="property">
+			<name>Kings Cross Station</name>
+			<value>200</value>
+			<group>stations</group>
+		</square>
+		<square type="property">
+			<name>The Angel, Islington</name>
+			<value>120</value>
+			<group>light-blue</group>
+		</square>
+		<square type="chance" />
+		<square type="property">
+			<name>Euston Road</name>
+			<value>100</value>
+			<group>light-blue</group>
+		</square>
+		<square type="property">
+			<name>Pentonville Road</name>
+			<value>120</value>
+			<group>light-blue</group>
+		</square>
+		<square type="jail" />
+		<square type="property">
+			<name>Pall Mall</name>
+			<value>140</value>
+			<group>purple</group>
+		</square>
+		<square type="property">
+			<name>Electric Company</name>
+			<value>150</value>
+			<group>utilities</group>
+		</square>
+		<square type="property">
+			<name>Whitehall</name>
+			<value>140</value>
+			<group>purple</group>
+		</square>
+		<square type="property">
+			<name>Northumberland Avenue</name>
+			<value>160</value>
+			<group>purple</group>
+		</square>
+		<square type="property">
+			<name>Marylebone Station</name>
+			<value>200</value>
+			<group>stations</group>
+		</square>
+		<square type="property">
+			<name>Bow Street</name>
+			<value>180</value>
+			<group>orange</group>
+		</square>
+		<square type="community-chest" />
+		<square type="property">
+			<name>Marlborough Street</name>
+			<value>180</value>
+			<group>orange</group>
+		</square>
+		<square type="property">
+			<name>Vine Street</name>
+			<value>200</value>
+			<group>orange</group>
+		</square>
+		<square type="free-parking" />
+		<square type="property">
+			<name>Strand</name>
+			<value>220</value>
+			<group>red</group>
+		</square>
+		<square type="chance" />
+		<square type="property">
+			<name>Fleet Street</name>
+			<value>220</value>
+			<group>red</group>
+		</square>
+		<square type="property">
+			<name>Trafalgar Square</name>
+			<value>240</value>
+			<group>red</group>
+		</square>
+		<square type="property">
+			<name>Fenchurch Street Station</name>
+			<value>200</value>
+			<group>stations</group>
+		</square>
+		<square type="property">
+			<name>Leicester Square</name>
+			<value>260</value>
+			<group>yellow</group>
+		</square>
+		<square type="property">
+			<name>Coventry Street</name>
+			<value>260</value>
+			<group>yellow</group>
+		</square>
+		<square type="property">
+			<name>Water Works</name>
+			<value>150</value>
+			<group>utilities</group>
+		</square>
+		<square type="property">
+			<name>Piccadilly</name>
+			<value>280</value>
+			<group>yellow</group>
+		</square>
+		<square type="go-to-jail" />
+		<square type="property">
+			<name>Regent Street</name>
+			<value>300</value>
+			<group>green</group>
+		</square>
+		<square type="property">
+			<name>Oxford Street</name>
+			<value>300</value>
+			<group>green</group>
+		</square>
+		<square type="community-chest" />
+		<square type="property">
+			<name>Bond Street</name>
+			<value>320</value>
+			<group>green</group>
+		</square>
+		<square type="property">
+			<name>Liverpool Street Station</name>
+			<value>200</value>
+			<group>stations</group>
+		</square>
+		<square type="chance" />
+		<square type="property">
+			<name>Park Lane</name>
+			<value>350</value>
+			<group>green</group>
+		</square>
+		<square type="super-tax" />
+		<square type="property">
+			<name>Mayfair</name>
+			<value>400</value>
+			<group>green</group>
+		</square>
+	</squares>
+
+	<groups>
+		<group id="brown">
+			<colour>774A22</colour>
+		</group>
+		<group id="stations" />
+		<group id="purple">
+			<colour>9A24A0</colour>
+		</group>
+		<group id="utilities" />
+		<group id="orange">
+			<colour>FF834F</colour>
+		</group>
+		<group id="red">
+			<colour>BC1C2F</colour>
+		</group>
+		<group id="yellow">
+			<colour>F9FF63</colour>
+		</group>
+		<group id="green">
+			<colour>41801C</colour>
+		</group>
+	</groups>
+
+	<configuration>
+		<starting-money>1500</starting-money>
+	</configuration>
+</monopoly>
