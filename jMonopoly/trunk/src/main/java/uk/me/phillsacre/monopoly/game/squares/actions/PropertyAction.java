@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.GameSquare;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
+import uk.me.phillsacre.monopoly.game.squares.rent.RentStrategy;
 import uk.me.phillsacre.monopoly.models.PlayerController;
 
 
@@ -18,32 +19,23 @@ public class PropertyAction implements SquareAction
     {
         PropertySquare property = (PropertySquare)currentSquare;
         PlayerController controller = player.getController();
+        Player owner = property.getOwner();
 
-        if (null == property.getOwner())
+        if (null == owner)
         {
             if (controller.wantToBuy( property ))
             {
-                if (player.getMoney() >= property.getValue())
-                {
-                    player.setMoney( player.getMoney() - property.getValue() );
-                    property.setOwner( player );
-                    player.getPropertiesOwned().add( property );
-
-                    _log.debug( String.format( "Player [%s] has bought property [%s]", player.getName(), property ) );
-
-                    controller.addProperty( property );
-                }
-                else
-                {
-                    controller.warn( "You do not have enough money to buy this property!" );
-                }
+                controller.addProperty( property );
             }
         }
         else
         {
-            if ( !property.getOwner().equals( player ))
+            if ( !owner.equals( player ))
             {
-                
+                RentStrategy rentStrategy = property.getRentStrategy();
+                Integer rent = rentStrategy.calculateRent( property, player, player.getCurrentDiceRoll() );
+
+                player.getController().payMoney( owner, rent );
             }
             else
             {

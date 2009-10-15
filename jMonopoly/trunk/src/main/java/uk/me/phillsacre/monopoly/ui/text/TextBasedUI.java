@@ -7,8 +7,10 @@ import java.io.InputStreamReader;
 import org.apache.commons.lang.StringUtils;
 
 import uk.me.phillsacre.monopoly.game.Player;
+import uk.me.phillsacre.monopoly.game.squares.GameSquare;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
 import uk.me.phillsacre.monopoly.models.MonopolyPM;
+import uk.me.phillsacre.monopoly.models.PlayerController.JailAction;
 import uk.me.phillsacre.monopoly.ui.MonopolyUI;
 import uk.me.phillsacre.monopoly.utils.DiceRoll;
 
@@ -74,10 +76,16 @@ public class TextBasedUI implements MonopolyUI
 
     /* === Implementing MonopolyUI ============================= */
 
-    @Override
-    public void displayDiceRoll( DiceRoll roll )
+    public void displaySalary()
     {
-        System.out.println( "Roll: " + roll.getDice1() + ", " + roll.getDice2() );
+        System.out.println( "Player has passed Go, collects £200" );
+    }
+
+    @Override
+    public void displayDiceRoll( DiceRoll roll, GameSquare square )
+    {
+        System.out.println( "Player rolls: " + roll.getDice1() + ", " + roll.getDice2() + ". Moves to: "
+                            + square.getName() );
     }
 
     public void setCurrentPlayer( Player player )
@@ -88,7 +96,12 @@ public class TextBasedUI implements MonopolyUI
     @Override
     public void addProperty( PropertySquare property )
     {
-        System.out.println( "** User has bought: " + property );
+        Player player = _pModel.getCurrentPlayer();
+
+        System.out.println( "** " + player.getName() + " has bought: " + property );
+        System.out.println( "** Total properties: " + player.getPropertiesOwned().size() + "; money: £"
+                            + player.getMoney() );
+
     }
 
     @Override
@@ -108,5 +121,45 @@ public class TextBasedUI implements MonopolyUI
     public void warn( String message )
     {
         System.out.println( "** Warning: " + message );
+    }
+
+    @Override
+    public void completeTurn()
+    {
+        System.out.println( "Press enter to continue..." );
+        readLine();
+    }
+
+    @Override
+    public void moveTo( GameSquare square )
+    {
+        System.out.println( "Moving to: " + square );
+    }
+
+    @Override
+    public void payMoney( Player destination, Integer amount )
+    {
+        String dest = (null == destination) ? "Bank" : destination.getName();
+
+        System.out.println( String.format( "£%d paid to: %s", amount, dest ) );
+    }
+
+    @Override
+    public void info( String message )
+    {
+        System.out.println( "** " + message );
+    }
+
+    @Override
+    public JailAction checkJailAction()
+    {
+        String which = readAnswer( "Do you want to: [A] Post bail, [B] Roll for doubles?" );
+
+        if (which.equalsIgnoreCase( "a" ))
+        {
+            return JailAction.POST_BAIL;
+        }
+
+        return JailAction.ROLL_FOR_DOUBLES;
     }
 }

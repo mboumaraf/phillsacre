@@ -5,13 +5,14 @@
 			<name>Old Kent Road</name>
 			<value>60</value>
 			<group>brown</group>
-			<rent type="default" />
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="community-chest" />
 		<square type="property">
 			<name>Whitechapel Road</name>
 			<value>60</value>
 			<group>brown</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="income-tax">
 			<value>200</value>
@@ -26,38 +27,45 @@
 			<name>The Angel, Islington</name>
 			<value>120</value>
 			<group>light-blue</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="chance" />
 		<square type="property">
 			<name>Euston Road</name>
 			<value>100</value>
 			<group>light-blue</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Pentonville Road</name>
 			<value>120</value>
 			<group>light-blue</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="jail" />
 		<square type="property">
 			<name>Pall Mall</name>
 			<value>140</value>
 			<group>purple</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Electric Company</name>
 			<value>150</value>
 			<group>utilities</group>
+			<rent type="utility" />
 		</square>
 		<square type="property">
 			<name>Whitehall</name>
 			<value>140</value>
 			<group>purple</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Northumberland Avenue</name>
 			<value>160</value>
 			<group>purple</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Marylebone Station</name>
@@ -69,34 +77,40 @@
 			<name>Bow Street</name>
 			<value>180</value>
 			<group>orange</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="community-chest" />
 		<square type="property">
 			<name>Marlborough Street</name>
 			<value>180</value>
 			<group>orange</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Vine Street</name>
 			<value>200</value>
 			<group>orange</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="free-parking" />
 		<square type="property">
 			<name>Strand</name>
 			<value>220</value>
 			<group>red</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="chance" />
 		<square type="property">
 			<name>Fleet Street</name>
 			<value>220</value>
 			<group>red</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Trafalgar Square</name>
 			<value>240</value>
 			<group>red</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Fenchurch Street Station</name>
@@ -108,38 +122,45 @@
 			<name>Leicester Square</name>
 			<value>260</value>
 			<group>yellow</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Coventry Street</name>
 			<value>260</value>
 			<group>yellow</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Water Works</name>
 			<value>150</value>
 			<group>utilities</group>
+			<rent type="utility" />
 		</square>
 		<square type="property">
 			<name>Piccadilly</name>
 			<value>280</value>
 			<group>yellow</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="go-to-jail" />
 		<square type="property">
 			<name>Regent Street</name>
 			<value>300</value>
 			<group>green</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Oxford Street</name>
 			<value>300</value>
 			<group>green</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="community-chest" />
 		<square type="property">
 			<name>Bond Street</name>
 			<value>320</value>
 			<group>green</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="property">
 			<name>Liverpool Street Station</name>
@@ -152,12 +173,14 @@
 			<name>Park Lane</name>
 			<value>350</value>
 			<group>green</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 		<square type="super-tax" />
 		<square type="property">
 			<name>Mayfair</name>
 			<value>400</value>
 			<group>green</group>
+			<rent type="default" values="4,20,40,100,200,400" />
 		</square>
 	</squares>
 

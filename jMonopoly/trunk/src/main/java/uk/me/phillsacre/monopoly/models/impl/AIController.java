@@ -2,23 +2,14 @@ package uk.me.phillsacre.monopoly.models.impl;
 
 import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
-import uk.me.phillsacre.monopoly.models.PlayerController;
+import uk.me.phillsacre.monopoly.ui.MonopolyUI;
 
 
-public class AIController implements PlayerController
+public class AIController extends AbstractController
 {
-    private Player _player;
-
-
-    public AIController( Player player )
+    public AIController( Player player, MonopolyUI ui )
     {
-        _player = player;
-    }
-
-    @Override
-    public void addProperty( PropertySquare property )
-    {
-        // Do nothing
+        super( player, ui );
     }
 
     @Override
@@ -41,4 +32,14 @@ public class AIController implements PlayerController
         // Do nothing
     }
 
+    @Override
+    public JailAction checkJailAction()
+    {
+        if (_player.getMoney() > (50 * 2))
+        {
+            return JailAction.POST_BAIL;
+        }
+
+        return JailAction.ROLL_FOR_DOUBLES;
+    }
 }

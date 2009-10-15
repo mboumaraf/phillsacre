@@ -1,27 +1,16 @@
 package uk.me.phillsacre.monopoly.models.impl;
 
+import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
-import uk.me.phillsacre.monopoly.models.PlayerController;
 import uk.me.phillsacre.monopoly.ui.MonopolyUI;
 
 
-public class HumanController implements PlayerController
+public class HumanController extends AbstractController
 {
-    private MonopolyUI _ui;
-
-
-    public HumanController( MonopolyUI ui )
+    public HumanController( Player player, MonopolyUI ui )
     {
-        _ui = ui;
+        super( player, ui );
     }
-
-
-    @Override
-    public void addProperty( PropertySquare property )
-    {
-        _ui.addProperty( property );
-    }
-
 
     @Override
     public boolean wantToBuy( PropertySquare property )
@@ -29,10 +18,15 @@ public class HumanController implements PlayerController
         return _ui.wantToBuy( property );
     }
 
-
     @Override
     public void warn( String message )
     {
         _ui.warn( message );
+    }
+
+    @Override
+    public JailAction checkJailAction()
+    {
+        return _ui.checkJailAction();
     }
 }

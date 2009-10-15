@@ -28,7 +28,10 @@ import uk.me.phillsacre.monopoly.game.squares.actions.IncomeTaxAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.JailAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.PropertyAction;
 import uk.me.phillsacre.monopoly.game.squares.actions.SuperTaxAction;
+import uk.me.phillsacre.monopoly.game.squares.rent.GeneralRentStrategy;
+import uk.me.phillsacre.monopoly.game.squares.rent.RentStrategy;
 import uk.me.phillsacre.monopoly.game.squares.rent.StationRentStrategy;
+import uk.me.phillsacre.monopoly.game.squares.rent.UtilityRentStrategy;
 
 
 public class GameDataLoader
@@ -103,7 +106,7 @@ public class GameDataLoader
         _gameData.addAction( GoSquare.class, new GoAction() );
         _gameData.addAction( FreeParkingSquare.class, new FreeParkingAction() );
         _gameData.addAction( CommunityChestSquare.class, new CommunityChestAction() );
-        _gameData.addAction( GoToJailSquare.class, new GoToJailAction() );
+        _gameData.addAction( GoToJailSquare.class, new GoToJailAction( _gameData ) );
         _gameData.addAction( IncomeTaxSquare.class, new IncomeTaxAction() );
         _gameData.addAction( JailSquare.class, new JailAction() );
         _gameData.addAction( PropertySquare.class, new PropertyAction() );
@@ -135,7 +138,13 @@ public class GameDataLoader
 
             prop.setName( squareElt.getChildText( "name" ) );
             prop.setValue( Integer.valueOf( squareElt.getChildText( "value" ) ) );
-            prop.setGroup( _gameData.getGroups().get( groupId ) );
+
+            SquareGroup group = _gameData.getGroups().get( groupId );
+            prop.setGroup( group );
+            if (null != group)
+            {
+                group.getSquares().add( prop );
+            }
 
             Element rentChild = squareElt.getChild( "rent" );
             String rentType = rentChild.getAttributeValue( "type" );
@@ -143,9 +152,15 @@ public class GameDataLoader
             {
                 prop.setRentStrategy( new StationRentStrategy() );
             }
+            else if ("utility".equals( rentType ))
+            {
+                prop.setRentStrategy( new UtilityRentStrategy() );
+            }
             else if ("default".equals( rentType ))
             {
-                prop.setRentStrategy( new DefaultRentStategy() );
+                String[] values = rentChild.getAttributeValue( "values" ).split( "," );
+
+                prop.setRentStrategy( getGeneralRentStrategy( values ) );
             }
 
             square = prop;
@@ -190,5 +205,17 @@ public class GameDataLoader
         _log.debug( "Created square: " + square.toString() );
 
         return square;
+    }
+
+    private RentStrategy getGeneralRentStrategy( String[] values )
+    {
+        Integer baseValue = Integer.valueOf( values[ 0 ] );
+        Integer oneHouse = Integer.valueOf( values[ 1 ] );
+        Integer twoHouses = Integer.valueOf( values[ 2 ] );
+        Integer threeHouses = Integer.valueOf( values[ 3 ] );
+        Integer fourHouses = Integer.valueOf( values[ 4 ] );
+        Integer hotel = Integer.valueOf( values[ 5 ] );
+
+        return new GeneralRentStrategy( baseValue, oneHouse, twoHouses, threeHouses, fourHouses, hotel );
     }
 }

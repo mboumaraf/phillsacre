@@ -20,7 +20,7 @@ public class StationRentStrategy implements RentStrategy
 
         for (PropertySquare station : property.getGroup().getSquares())
         {
-            if (station.getOwner().equals( owner ))
+            if (station.getOwner() != null && station.getOwner().equals( owner ))
             {
                 count++ ;
             }
@@ -42,9 +42,10 @@ public class StationRentStrategy implements RentStrategy
             case 4:
                 rent = 200;
                 break;
+            default:
+                throw new RuntimeException( "Invalid number of stations owned (" + count + ")!" );
         }
 
         return rent;
     }
-
 }

@@ -8,6 +8,7 @@ import uk.me.phillsacre.monopoly.game.GameState;
 import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.GameSquare;
 import uk.me.phillsacre.monopoly.game.squares.actions.SquareAction;
+import uk.me.phillsacre.monopoly.models.PlayerController.JailAction;
 import uk.me.phillsacre.monopoly.models.impl.AIController;
 import uk.me.phillsacre.monopoly.models.impl.HumanController;
 import uk.me.phillsacre.monopoly.ui.MonopolyUI;
@@ -43,7 +44,7 @@ public class MonopolyPM
         String playerName = "Player " + count;
 
         Player player = newPlayer( playerName );
-        player.setController( new AIController( player ) );
+        player.setController( new AIController( player, _ui ) );
 
         _gameState.getPlayers().add( player );
 
@@ -53,7 +54,7 @@ public class MonopolyPM
     public void startGame()
     {
         Player player = newPlayer( _playerName );
-        player.setController( new HumanController( _ui ) );
+        player.setController( new HumanController( player, _ui ) );
 
         _gameState.getPlayers().add( player );
 
@@ -64,7 +65,9 @@ public class MonopolyPM
 
         // TODO: Determine who is to start by a dice roll.
 
-        while ( !_gameState.isComplete())
+        int turns = 0;
+
+        while ( !_gameState.isComplete() && turns++ < 20)
         {
             playTurn();
         }
@@ -78,19 +81,29 @@ public class MonopolyPM
             setCurrentPlayer( player );
 
             DiceRoll roll = DiceRoll.getNext();
-            _ui.displayDiceRoll( roll );
+
+            if (player.isInJail())
+            {
+                if ( !handleJail( roll ))
+                {
+                    continue;
+                }
+            }
 
             GameSquare square = getNextSquare( player, roll );
             player.setCurrentSquare( square );
+            player.setCurrentDiceRoll( roll );
+
+            _ui.displayDiceRoll( roll, square );
 
             _log.debug( "Player is now at: " + square );
 
             SquareAction action = _gameState.getData().getAction( square.getClass() );
 
             action.doAction( player, square );
-        }
 
-        _gameState.setComplete( true );
+            _ui.completeTurn();
+        }
     }
 
     private Player newPlayer( String name )
@@ -105,6 +118,51 @@ public class MonopolyPM
 
     /* === Private methods ================================ */
 
+    /**
+     * Returns false if the player remains in jail.
+     */
+    private boolean handleJail( DiceRoll roll )
+    {
+        Player player = getCurrentPlayer();
+        JailAction action = null;
+        boolean allowContinue = false;
+
+        if (player.getJailCount() == 2)
+        {
+            // Third time - player MUST post bail
+            _ui.info( "Third time in jail - player must post bail" );
+
+            action = JailAction.POST_BAIL;
+        }
+        else
+        {
+            action = player.getController().checkJailAction();
+        }
+
+        if (action == JailAction.ROLL_FOR_DOUBLES)
+        {
+            if (roll.getDice1() == roll.getDice2())
+            {
+                player.setJailCount( 0 );
+                player.setInJail( false );
+
+                _ui.info( "Player has rolled doubles, continuing" );
+                allowContinue = true;
+            }
+        }
+        else if (action == JailAction.POST_BAIL)
+        {
+            player.getController().payMoney( null, 50 );
+            player.setJailCount( 0 );
+            player.setInJail( false );
+
+            allowContinue = true;
+        }
+        // TODO: Implement using "Get out of jail" card
+
+        return allowContinue;
+    }
+
     private GameSquare getNextSquare( Player player, DiceRoll roll )
     {
         List<GameSquare> squares = _gameState.getData().getSquares();
@@ -114,7 +172,7 @@ public class MonopolyPM
 
         int newIndex = index + roll.getTotal();
 
-        if (newIndex > squares.size())
+        if (newIndex >= squares.size())
         {
             passGo( player );
             newIndex = newIndex - squares.size();
@@ -129,6 +187,7 @@ public class MonopolyPM
     {
         _log.debug( "Player has passed go, adding 200 salary" );
         player.setMoney( player.getMoney() + 200 );
+        _ui.displaySalary();
     }
 
     /* === Accessors ====================================== */

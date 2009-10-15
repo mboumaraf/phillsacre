@@ -10,8 +10,8 @@ public class PropertySquare extends GameSquare
     private Player       _owner;
     private SquareGroup  _group;
     private RentStrategy _rentStrategy;
-    private Integer      _numHouses;
-    private Integer      _numHotels;
+    private Integer      _numHouses = 0;
+    private Integer      _numHotels = 0;
 
 
     /**

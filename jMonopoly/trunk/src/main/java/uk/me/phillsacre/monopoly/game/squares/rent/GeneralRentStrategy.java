@@ -2,6 +2,7 @@ package uk.me.phillsacre.monopoly.game.squares.rent;
 
 import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
+import uk.me.phillsacre.monopoly.game.utils.GameUtils;
 import uk.me.phillsacre.monopoly.utils.DiceRoll;
 
 
@@ -39,7 +40,6 @@ public class GeneralRentStrategy implements RentStrategy
     {
         // Assume that player does not own the property, as this will have already been checked.
 
-        Player owner = property.getOwner();
         boolean ownsAll = true;
 
         if (property.getNumHotels() > 0)
@@ -64,14 +64,14 @@ public class GeneralRentStrategy implements RentStrategy
             }
         }
 
-        // Check whether owner owns all houses in group. If so, base rent is doubled.
-        for (PropertySquare sibling : property.getGroup().getSquares())
+        if (null != property.getGroup())
         {
-            if ( !sibling.getOwner().equals( owner ))
-            {
-                ownsAll = false;
-                break;
-            }
+            // Check whether owner owns all houses in group. If so, base rent is doubled.
+            ownsAll = GameUtils.isMonopoly( property, player );
+        }
+        else
+        {
+            ownsAll = false;
         }
 
         if (ownsAll)

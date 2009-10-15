@@ -6,6 +6,7 @@ import java.util.List;
 import uk.me.phillsacre.monopoly.game.squares.GameSquare;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
 import uk.me.phillsacre.monopoly.models.PlayerController;
+import uk.me.phillsacre.monopoly.utils.DiceRoll;
 
 
 
@@ -14,13 +15,32 @@ public class Player
     private String               _name;
     private Integer              _money;
     private GameSquare           _currentSquare;
+    private DiceRoll             _currentDiceRoll;
     private List<PropertySquare> _propertiesOwned;
     private PlayerController     _controller;
+    private boolean              _inJail;
+    private int                  _jailCount;
 
 
     public Player()
     {
         _propertiesOwned = new ArrayList<PropertySquare>();
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (null == o || o.getClass() != this.getClass())
+        {
+            return false;
+        }
+
+        Player player = (Player)o;
+        return player.getName().equals( _name );
     }
 
 
@@ -97,6 +117,63 @@ public class Player
     public PlayerController getController()
     {
         return _controller;
+    }
+
+
+    /**
+     * @return the inJail
+     */
+    public boolean isInJail()
+    {
+        return _inJail;
+    }
+
+
+    /**
+     * @param inJail
+     *            the inJail to set
+     */
+    public void setInJail( boolean inJail )
+    {
+        _inJail = inJail;
+    }
+
+
+    /**
+     * @return the jailCount
+     */
+    public int getJailCount()
+    {
+        return _jailCount;
+    }
+
+
+    /**
+     * @param jailCount
+     *            the jailCount to set
+     */
+    public void setJailCount( int jailCount )
+    {
+        _jailCount = jailCount;
+    }
+
+
+    /**
+     * @return the currentDiceRoll
+     */
+    public DiceRoll getCurrentDiceRoll()
+    {
+        return _currentDiceRoll;
+    }
+
+
+    /**
+     * @param currentDiceRoll
+     *            the currentDiceRoll to set
+     */
+    public void setCurrentDiceRoll( DiceRoll currentDiceRoll )
+    {
+        _currentDiceRoll = currentDiceRoll;
     }
 
 }
