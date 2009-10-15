@@ -78,7 +78,7 @@ public class TextBasedUI implements MonopolyUI
 
     public void displaySalary()
     {
-        System.out.println( "Player has passed Go, collects £200" );
+        System.out.println( "Player has passed Go, collects Â£200" );
     }
 
     @Override
@@ -99,7 +99,7 @@ public class TextBasedUI implements MonopolyUI
         Player player = _pModel.getCurrentPlayer();
 
         System.out.println( "** " + player.getName() + " has bought: " + property );
-        System.out.println( "** Total properties: " + player.getPropertiesOwned().size() + "; money: £"
+        System.out.println( "** Total properties: " + player.getPropertiesOwned().size() + "; money: Â£"
                             + player.getMoney() );
 
     }
@@ -141,7 +141,7 @@ public class TextBasedUI implements MonopolyUI
     {
         String dest = (null == destination) ? "Bank" : destination.getName();
 
-        System.out.println( String.format( "£%d paid to: %s", amount, dest ) );
+        System.out.println( String.format( "Â£%d paid to: %s", amount, dest ) );
     }
 
     @Override

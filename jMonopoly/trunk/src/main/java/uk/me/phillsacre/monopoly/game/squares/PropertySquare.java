@@ -120,6 +120,6 @@ public class PropertySquare extends GameSquare
     @Override
     public String toString()
     {
-        return getName() + " (£" + getValue() + ")";
+        return getName() + " (Â£" + getValue() + ")";
     }
 }

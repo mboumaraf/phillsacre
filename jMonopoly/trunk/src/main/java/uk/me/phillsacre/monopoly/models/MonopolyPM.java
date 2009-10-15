@@ -14,7 +14,6 @@ import uk.me.phillsacre.monopoly.models.impl.HumanController;
 import uk.me.phillsacre.monopoly.ui.MonopolyUI;
 import uk.me.phillsacre.monopoly.utils.DiceRoll;
 
-
 /**
  * Monopoly Presentation Model
  * 
@@ -23,97 +22,110 @@ import uk.me.phillsacre.monopoly.utils.DiceRoll;
  */
 public class MonopolyPM
 {
-    private static final Logger _log = Logger.getLogger( MonopolyPM.class );
+    private static final Logger _log = Logger.getLogger(MonopolyPM.class);
 
-    private MonopolyUI          _ui;
-    private GameState           _gameState;
-    private String              _playerName;
-    private Integer             _playerCount;
+    private MonopolyUI _ui;
+    private GameState _gameState;
+    private String _playerName;
+    private Integer _playerCount;
 
-
-    public MonopolyPM( GameState state )
+    public MonopolyPM(GameState state)
     {
-        _gameState = state;
+	_gameState = state;
     }
 
     public void addAIPlayer()
     {
-        int count = _gameState.getPlayers().size();
-        count += 1;
+	int count = _gameState.getPlayers().size();
+	count += 1;
 
-        String playerName = "Player " + count;
+	String playerName = "Player " + count;
 
-        Player player = newPlayer( playerName );
-        player.setController( new AIController( player, _ui ) );
+	Player player = newPlayer(playerName);
+	player.setController(new AIController(player, _ui));
 
-        _gameState.getPlayers().add( player );
+	_gameState.getPlayers().add(player);
 
-        _log.debug( "Added AI player: " + playerName );
+	_log.debug("Added AI player: " + playerName);
     }
 
     public void startGame()
     {
-        Player player = newPlayer( _playerName );
-        player.setController( new HumanController( player, _ui ) );
+	Player player = newPlayer(_playerName);
+	player.setController(new HumanController(player, _ui));
 
-        _gameState.getPlayers().add( player );
+	_gameState.getPlayers().add(player);
 
-        for (int i = 1; i < _playerCount; i++ )
-        {
-            addAIPlayer();
-        }
+	for (int i = 1; i < _playerCount; i++)
+	{
+	    addAIPlayer();
+	}
 
-        // TODO: Determine who is to start by a dice roll.
+	// TODO: Determine who is to start by a dice roll.
 
-        int turns = 0;
+	int turns = 0;
 
-        while ( !_gameState.isComplete() && turns++ < 20)
-        {
-            playTurn();
-        }
+	while (!_gameState.isComplete() && turns++ < 20)
+	{
+	    playTurn();
+	}
     }
 
     public void playTurn()
     {
-        for (Player player : _gameState.getPlayers())
-        {
-            _ui.setCurrentPlayer( player );
-            setCurrentPlayer( player );
+	for (Player player : _gameState.getPlayers())
+	{
+	    _ui.setCurrentPlayer(player);
+	    setCurrentPlayer(player);
 
-            DiceRoll roll = DiceRoll.getNext();
+	    boolean turnAgain = false;
 
-            if (player.isInJail())
-            {
-                if ( !handleJail( roll ))
-                {
-                    continue;
-                }
-            }
+	    do
+	    {
+		DiceRoll roll = DiceRoll.getNext();
 
-            GameSquare square = getNextSquare( player, roll );
-            player.setCurrentSquare( square );
-            player.setCurrentDiceRoll( roll );
+		if (player.isInJail())
+		{
+		    if (!handleJail(roll))
+		    {
+			continue;
+		    }
+		}
+		else
+		{
+		    if (roll.isDoubles())
+		    {
+			turnAgain = true;
+		    }
+		}
 
-            _ui.displayDiceRoll( roll, square );
+		GameSquare square = getNextSquare(player, roll);
+		player.setCurrentSquare(square);
+		player.setCurrentDiceRoll(roll);
 
-            _log.debug( "Player is now at: " + square );
+		_ui.displayDiceRoll(roll, square);
 
-            SquareAction action = _gameState.getData().getAction( square.getClass() );
+		_log.debug("Player is now at: " + square);
 
-            action.doAction( player, square );
+		SquareAction action = _gameState.getData().getAction(
+			square.getClass());
 
-            _ui.completeTurn();
-        }
+		action.doAction(player, square);
+
+		_ui.completeTurn();
+
+	    } while (turnAgain);
+	}
     }
 
-    private Player newPlayer( String name )
+    private Player newPlayer(String name)
     {
-        Player player = new Player();
-        player.setName( name );
-        player.setCurrentSquare( _gameState.getInitialSquare() );
-        player.setMoney( _gameState.getStartingMoney() );
+	Player player = new Player();
+	player.setName(name);
+	player.setCurrentSquare(_gameState.getInitialSquare());
+	player.setMoney(_gameState.getStartingMoney());
 
-        return player;
+	return player;
     }
 
     /* === Private methods ================================ */
@@ -121,103 +133,96 @@ public class MonopolyPM
     /**
      * Returns false if the player remains in jail.
      */
-    private boolean handleJail( DiceRoll roll )
+    private boolean handleJail(DiceRoll roll)
     {
-        Player player = getCurrentPlayer();
-        JailAction action = null;
-        boolean allowContinue = false;
+	Player player = getCurrentPlayer();
+	JailAction action = null;
+	boolean allowContinue = false;
 
-        if (player.getJailCount() == 2)
-        {
-            // Third time - player MUST post bail
-            _ui.info( "Third time in jail - player must post bail" );
+	if (player.getJailCount() == 2)
+	{
+	    // Third time - player MUST post bail
+	    _ui.info("Third time in jail - player must post bail");
 
-            action = JailAction.POST_BAIL;
-        }
-        else
-        {
-            action = player.getController().checkJailAction();
-        }
+	    action = JailAction.POST_BAIL;
+	}
+	else
+	{
+	    action = player.getController().checkJailAction();
+	}
 
-        if (action == JailAction.ROLL_FOR_DOUBLES)
-        {
-            if (roll.getDice1() == roll.getDice2())
-            {
-                player.setJailCount( 0 );
-                player.setInJail( false );
+	if (action == JailAction.ROLL_FOR_DOUBLES)
+	{
+	    if (roll.getDice1() == roll.getDice2())
+	    {
+		player.setJailCount(0);
+		player.setInJail(false);
 
-                _ui.info( "Player has rolled doubles, continuing" );
-                allowContinue = true;
-            }
-        }
-        else if (action == JailAction.POST_BAIL)
-        {
-            player.getController().payMoney( null, 50 );
-            player.setJailCount( 0 );
-            player.setInJail( false );
+		_ui.info("Player has rolled doubles, continuing");
+		allowContinue = true;
+	    }
+	}
+	else if (action == JailAction.POST_BAIL)
+	{
+	    player.getController().payMoney(null, 50);
+	    player.setJailCount(0);
+	    player.setInJail(false);
 
-            allowContinue = true;
-        }
-        // TODO: Implement using "Get out of jail" card
+	    allowContinue = true;
+	}
+	// TODO: Implement using "Get out of jail" card
 
-        return allowContinue;
+	return allowContinue;
     }
 
-    private GameSquare getNextSquare( Player player, DiceRoll roll )
+    private GameSquare getNextSquare(Player player, DiceRoll roll)
     {
-        List<GameSquare> squares = _gameState.getData().getSquares();
-        GameSquare currentSquare = player.getCurrentSquare();
+	List<GameSquare> squares = _gameState.getData().getSquares();
+	GameSquare currentSquare = player.getCurrentSquare();
 
-        int index = squares.indexOf( currentSquare );
+	int index = squares.indexOf(currentSquare);
 
-        int newIndex = index + roll.getTotal();
+	int newIndex = index + roll.getTotal();
 
-        if (newIndex >= squares.size())
-        {
-            passGo( player );
-            newIndex = newIndex - squares.size();
-        }
+	if (newIndex >= squares.size())
+	{
+	    player.getController().passGo();
+	    newIndex = newIndex - squares.size();
+	}
 
-        _log.debug( "New index is: " + newIndex );
+	_log.debug("New index is: " + newIndex);
 
-        return squares.get( newIndex );
-    }
-
-    private void passGo( Player player )
-    {
-        _log.debug( "Player has passed go, adding 200 salary" );
-        player.setMoney( player.getMoney() + 200 );
-        _ui.displaySalary();
+	return squares.get(newIndex);
     }
 
     /* === Accessors ====================================== */
 
-    public void setPlayerName( String name )
+    public void setPlayerName(String name)
     {
-        _playerName = name;
+	_playerName = name;
     }
 
-    public void setPlayerCount( Integer count )
+    public void setPlayerCount(Integer count)
     {
-        if (count < 2 || count > 8)
-        {
-            throw new RuntimeException( "Must have been 2 and 8 players" );
-        }
-        _playerCount = count;
+	if (count < 2 || count > 8)
+	{
+	    throw new RuntimeException("Must have been 2 and 8 players");
+	}
+	_playerCount = count;
     }
 
-    public void setUI( MonopolyUI ui )
+    public void setUI(MonopolyUI ui)
     {
-        _ui = ui;
+	_ui = ui;
     }
 
-    public void setCurrentPlayer( Player player )
+    public void setCurrentPlayer(Player player)
     {
-        _gameState.setCurrentPlayer( player );
+	_gameState.setCurrentPlayer(player);
     }
 
     public Player getCurrentPlayer()
     {
-        return _gameState.getCurrentPlayer();
+	return _gameState.getCurrentPlayer();
     }
 }

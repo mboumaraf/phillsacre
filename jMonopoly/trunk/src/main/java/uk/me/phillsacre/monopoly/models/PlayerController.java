@@ -4,16 +4,11 @@ import uk.me.phillsacre.monopoly.game.Player;
 import uk.me.phillsacre.monopoly.game.squares.GameSquare;
 import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
 
-
 public interface PlayerController
 {
-    public enum JailAction
-    {
-        ROLL_FOR_DOUBLES,
-        POST_BAIL,
-        USE_CARD
+    public enum JailAction {
+	ROLL_FOR_DOUBLES, POST_BAIL, USE_CARD
     };
-
 
     /**
      * Checks whether the user wants to buy a specific property. This should allow them to sell / mortgage as necessary
@@ -22,28 +17,28 @@ public interface PlayerController
      * @param property
      * @return
      */
-    boolean wantToBuy( PropertySquare property );
+    boolean wantToBuy(PropertySquare property);
 
     /**
      * Indicates that the user has acquired a property.
      * 
      * @param property
      */
-    void addProperty( PropertySquare property );
+    void addProperty(PropertySquare property);
 
     /**
      * Sends a warning message to the user
      * 
      * @param message
      */
-    void warn( String message );
+    void warn(String message);
 
     /**
      * Moves a user to a particular square.
      * 
      * @param gameSquare
      */
-    void moveToSquare( GameSquare gameSquare );
+    void moveToSquare(GameSquare gameSquare);
 
     /**
      * Pay money to another player or, if the destination is null, the bank.
@@ -51,7 +46,14 @@ public interface PlayerController
      * @param destination
      * @param amount
      */
-    void payMoney( Player destination, Integer amount );
+    void payMoney(Player destination, Integer amount);
+
+    /**
+     * 
+     * @param source
+     * @param amount
+     */
+    void addMoney(Player source, Integer amount);
 
     /**
      * Checks what action the player wants to take
@@ -59,4 +61,6 @@ public interface PlayerController
      * @return
      */
     JailAction checkJailAction();
+
+    void passGo();
 }

@@ -6,48 +6,59 @@ import uk.me.phillsacre.monopoly.game.squares.PropertySquare;
 import uk.me.phillsacre.monopoly.models.PlayerController;
 import uk.me.phillsacre.monopoly.ui.MonopolyUI;
 
-
 public abstract class AbstractController implements PlayerController
 {
-    protected Player     _player;
+    protected Player _player;
     protected MonopolyUI _ui;
 
-
-    public AbstractController( Player player, MonopolyUI ui )
+    public AbstractController(Player player, MonopolyUI ui)
     {
-        _player = player;
-        _ui = ui;
+	_player = player;
+	_ui = ui;
     }
 
     @Override
-    public void addProperty( PropertySquare property )
+    public void addProperty(PropertySquare property)
     {
-        _player.setMoney( _player.getMoney() - property.getValue() );
-        _player.getPropertiesOwned().add( property );
-        property.setOwner( _player );
+	_player.setMoney(_player.getMoney() - property.getValue());
+	_player.getPropertiesOwned().add(property);
+	property.setOwner(_player);
 
-        _ui.addProperty( property );
+	_ui.addProperty(property);
     }
 
     @Override
-    public void moveToSquare( GameSquare gameSquare )
+    public void moveToSquare(GameSquare gameSquare)
     {
-        _player.setCurrentSquare( gameSquare );
-        _ui.moveTo( gameSquare );
+	_player.setCurrentSquare(gameSquare);
+	_ui.moveTo(gameSquare);
     }
 
     @Override
-    public void payMoney( Player destination, Integer amount )
+    public void payMoney(Player destination, Integer amount)
     {
-        // TODO: check if player does not have enough
-        _player.setMoney( _player.getMoney() - amount );
+	// TODO: check if player does not have enough
+	_player.setMoney(_player.getMoney() - amount);
 
-        if (null != destination)
-        {
-            destination.setMoney( destination.getMoney() + amount );
-        }
+	if (null != destination)
+	{
+	    destination.setMoney(destination.getMoney() + amount);
+	}
 
-        _ui.payMoney( destination, amount );
+	_ui.payMoney(destination, amount);
+    }
+
+    @Override
+    public void addMoney(Player source, Integer amount)
+    {
+	_player.setMoney(_player.getMoney() + amount);
+    }
+
+    @Override
+    public void passGo()
+    {
+	_player.setMoney(_player.getMoney() + 200);
+	_ui.displaySalary();
     }
 
 }
