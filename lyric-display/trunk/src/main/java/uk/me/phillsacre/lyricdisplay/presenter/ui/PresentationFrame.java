@@ -41,6 +41,8 @@ public class PresentationFrame extends JFrame
     private BufferedImage     _buffer;
     private Timer             _timer;
     private TimerTask         _currentTask;
+    private int               _availableWidth;
+    private int               _availableHeight;
 
     public PresentationFrame()
     {
@@ -61,6 +63,12 @@ public class PresentationFrame extends JFrame
 		EventBus.publish(event);
 	    }
 	});
+
+	int marginW = (int) Math.round((float) getWidth() * 0.1);
+	int marginH = (int) Math.round((float) getHeight() * 0.1);
+
+	_availableWidth = getWidth() - (marginW * 2);
+	_availableHeight = getHeight() - (marginH * 2);
     }
 
     public void setSlide(Slide slide)
@@ -198,8 +206,8 @@ public class PresentationFrame extends JFrame
 	Graphics2D g = (Graphics2D) g2d.create();
 
 	Font f = new Font("Helvetica", Font.PLAIN, 12);
-	int pointSize = getSize(f, lines);
-	f = f.deriveFont((float) pointSize);
+	float pointSize = getSize(f, lines);
+	f = f.deriveFont(pointSize);
 
 	FontMetrics metrics = g.getFontMetrics(f);
 
@@ -210,10 +218,9 @@ public class PresentationFrame extends JFrame
 	    width = Math.max(width, w);
 	}
 	int lineHeight = metrics.getHeight();
-	int height = lineHeight * (lines.length - 1);
 
 	int left = (getWidth() - width) / 2;
-	int top = (getHeight() - height) / 2;
+	int top = ((getHeight() - _availableHeight) / 2) + lineHeight;
 
 	g.setFont(f);
 	g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -244,8 +251,10 @@ public class PresentationFrame extends JFrame
      *            The lines of text to display on screen
      * @return
      */
-    private int getSize(Font f, String[] lines)
+    private float getSize(Font f, String[] lines)
     {
+	// TODO: This call always takes about 1 second the first time it is run.
+	// Run this on intialisation instead.
 	FontMetrics fm = getGraphics().getFontMetrics(f);
 
 	int maxWidth = 0;
@@ -256,20 +265,14 @@ public class PresentationFrame extends JFrame
 
 	int maxHeight = lines.length * fm.getHeight();
 
-	int marginW = (int) Math.round((float) getWidth() * 0.1);
-	int marginH = (int) Math.round((float) getHeight() * 0.1);
-
-	int availableWidth = getWidth() - (marginW * 2);
-	int availableHeight = getHeight() - (marginH * 2);
-
-	float scaleFactorW = (float) availableWidth / (float) maxWidth;
-	float scaleFactorH = (float) availableHeight / (float) maxHeight;
+	float scaleFactorW = (float) _availableWidth / (float) maxWidth;
+	float scaleFactorH = (float) _availableHeight / (float) maxHeight;
 
 	float scaleFactor = Math.min(scaleFactorW, scaleFactorH);
 
 	int fontSize = f.getSize();
 
-	return (int) Math.round(fontSize * scaleFactor);
+	return fontSize * scaleFactor;
     }
 
     @Override
