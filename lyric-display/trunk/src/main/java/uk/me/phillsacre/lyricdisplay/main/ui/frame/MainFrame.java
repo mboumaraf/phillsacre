@@ -3,16 +3,21 @@
  */
 package uk.me.phillsacre.lyricdisplay.main.ui.frame;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
 import org.bushe.swing.event.EventBus;
 
+import uk.me.phillsacre.lyricdisplay.main.ui.actions.AddSongAction;
+import uk.me.phillsacre.lyricdisplay.main.ui.components.SongList;
 import uk.me.phillsacre.lyricdisplay.presenter.events.BlackoutEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangeSlideEvent;
@@ -42,7 +47,10 @@ public class MainFrame extends JFrame
 	setLocationRelativeTo(null);
 	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-	setLayout(new FlowLayout());
+	setLayout(new BorderLayout());
+
+	JPanel btnPanel = new JPanel();
+
 	JButton toggleMain = new JButton("Toggle Main");
 	toggleMain.addActionListener(new ActionListener() {
 	    private boolean _visible = false;
@@ -58,7 +66,7 @@ public class MainFrame extends JFrame
 	    }
 	});
 
-	add(toggleMain);
+	btnPanel.add(toggleMain);
 
 	JButton blackoutBtn = new JButton("Blackout");
 	blackoutBtn.addActionListener(new ActionListener() {
@@ -73,7 +81,7 @@ public class MainFrame extends JFrame
 
 	});
 
-	add(blackoutBtn);
+	btnPanel.add(blackoutBtn);
 
 	final String[] verses = {
 	        "Yours for ever! God of love\nhear us from Your throne above;\nYours for ever may we be,\nhere and in eternity.",
@@ -98,6 +106,26 @@ public class MainFrame extends JFrame
 	    }
 	});
 
-	add(slideBtn);
+	btnPanel.add(slideBtn);
+
+	add(btnPanel, BorderLayout.SOUTH);
+
+	SongList songList = new SongList();
+	JPanel songPanel = new JPanel();
+	songPanel.setLayout(new BorderLayout());
+	songPanel.setBorder(BorderFactory.createTitledBorder("Songs"));
+	songPanel.add(new JScrollPane(songList), BorderLayout.CENTER);
+
+	JPanel songBtnPanel = new JPanel();
+
+	JButton addSongBtn = new JButton(new AddSongAction());
+	songBtnPanel.add(addSongBtn);
+
+	JButton editSongBtn = new JButton("Edit");
+	songBtnPanel.add(editSongBtn);
+
+	songPanel.add(songBtnPanel, BorderLayout.SOUTH);
+
+	add(songPanel, BorderLayout.WEST);
     }
 }

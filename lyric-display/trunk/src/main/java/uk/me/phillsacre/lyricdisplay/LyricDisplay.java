@@ -3,8 +3,10 @@
  */
 package uk.me.phillsacre.lyricdisplay;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import uk.me.phillsacre.lyricdisplay.main.ui.frame.MainFrame;
-import uk.me.phillsacre.lyricdisplay.presenter.controller.PresentationController;
 
 /**
  * 
@@ -13,12 +15,19 @@ import uk.me.phillsacre.lyricdisplay.presenter.controller.PresentationController
  */
 public class LyricDisplay
 {
+    private static ApplicationContext APP_CONTEXT;
+
     public static void main(String[] args)
     {
-	PresentationController controller = new PresentationController();
-
-	controller.init();
+	// Initialise the application context
+	APP_CONTEXT = new ClassPathXmlApplicationContext(
+	        "spring/spring-main.xml");
 
 	MainFrame.getInstance().setVisible(true);
+    }
+
+    public static ApplicationContext getApplicationContext()
+    {
+	return APP_CONTEXT;
     }
 }

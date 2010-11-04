@@ -8,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
+import javax.inject.Named;
 import javax.swing.SwingUtilities;
 
 import org.bushe.swing.event.EventBus;
@@ -25,6 +26,7 @@ import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationFrame;
  * @author Phill
  * @since 27 Oct 2010
  */
+@Named("presentationController")
 public class PresentationController
 {
     private PresentationFrame _presentation;
@@ -146,6 +148,7 @@ public class PresentationController
 	    if (gd.isFullScreenSupported())
 	    {
 		gd.setFullScreenWindow(null);
+		_presentation.setVisible(false);
 	    }
 	}
     }

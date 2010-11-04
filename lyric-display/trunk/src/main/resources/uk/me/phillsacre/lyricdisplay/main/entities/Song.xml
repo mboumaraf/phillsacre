@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap
+        PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Song">
+
+	<typeAlias alias="Song"
+		type="uk.me.phillsacre.lyricdisplay.main.entities.Song" />
+
+	<resultMap class="Song" id="result">
+		<result property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="text" column="text" />
+	</resultMap>
+
+	<select id="selectAll" resultMap="result"><![CDATA[
+		SELECT id, title, text
+		FROM tblSongs
+	]]></select>
+
+	<insert id="insert" parameterClass="Song">
+		INSERT INTO tblSongs (title, text)
+		VALUES (#title#, #text#)
+		
+		<selectKey resultClass="int">
+			SELECT SCOPE_IDENTITY()
+		</selectKey>
+	</insert>
+	
+	<update id="update" parameterClass="Song">
+		UPDATE tblSongs
+		SET
+			title = #title#,
+			text = #text#
+		WHERE
+			id = #id#
+	</update>
+
+</sqlMap>

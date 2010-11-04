@@ -11,6 +11,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -63,12 +65,14 @@ public class PresentationFrame extends JFrame
 		EventBus.publish(event);
 	    }
 	});
-
-	int marginW = (int) Math.round((float) getWidth() * 0.1);
-	int marginH = (int) Math.round((float) getHeight() * 0.1);
-
-	_availableWidth = getWidth() - (marginW * 2);
-	_availableHeight = getHeight() - (marginH * 2);
+	addComponentListener(new ComponentAdapter() {
+	    @Override
+	    public void componentResized(ComponentEvent e)
+	    {
+		_buffer = null;
+		render();
+	    }
+	});
     }
 
     public void setSlide(Slide slide)
@@ -116,6 +120,12 @@ public class PresentationFrame extends JFrame
     {
 	_buffer = g2d.getDeviceConfiguration().createCompatibleImage(
 	        getWidth(), getHeight());
+
+	int marginW = (int) Math.round((float) getWidth() * 0.1);
+	int marginH = (int) Math.round((float) getHeight() * 0.1);
+
+	_availableWidth = getWidth() - (marginW * 2);
+	_availableHeight = getHeight() - (marginH * 2);
     }
 
     private static void copySrcIntoDstAt(final BufferedImage src,
