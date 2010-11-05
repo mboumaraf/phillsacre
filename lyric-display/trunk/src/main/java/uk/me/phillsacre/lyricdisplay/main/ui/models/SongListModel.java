@@ -7,9 +7,13 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
+import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
+
 import uk.me.phillsacre.lyricdisplay.LyricDisplay;
 import uk.me.phillsacre.lyricdisplay.main.dao.SongsDAO;
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
+import uk.me.phillsacre.lyricdisplay.main.events.SaveSongEvent;
 
 /**
  * 
@@ -29,6 +33,16 @@ public class SongListModel extends AbstractListModel
 	        .getBean(SongsDAO.class);
 
 	_songs = _songsDAO.getSongs();
+
+	EventBus.subscribeStrongly(SaveSongEvent.class,
+	        new EventSubscriber<SaveSongEvent>() {
+
+		    @Override
+		    public void onEvent(SaveSongEvent event)
+		    {
+		        refreshSongs();
+		    }
+	        });
     }
 
     @Override
@@ -43,4 +57,10 @@ public class SongListModel extends AbstractListModel
 	return _songs.size();
     }
 
+    private void refreshSongs()
+    {
+	_songs = _songsDAO.getSongs();
+
+	fireContentsChanged(this, 0, getSize());
+    }
 }

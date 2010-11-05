@@ -17,6 +17,7 @@
 	<select id="selectAll" resultMap="result"><![CDATA[
 		SELECT id, title, text
 		FROM tblSongs
+		ORDER BY title ASC
 	]]></select>
 
 	<insert id="insert" parameterClass="Song">

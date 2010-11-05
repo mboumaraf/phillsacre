@@ -17,12 +17,11 @@ import javax.swing.WindowConstants;
 import org.bushe.swing.event.EventBus;
 
 import uk.me.phillsacre.lyricdisplay.main.ui.actions.AddSongAction;
+import uk.me.phillsacre.lyricdisplay.main.ui.actions.EditSongAction;
 import uk.me.phillsacre.lyricdisplay.main.ui.components.SongList;
 import uk.me.phillsacre.lyricdisplay.presenter.events.BlackoutEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent;
-import uk.me.phillsacre.lyricdisplay.presenter.events.ChangeSlideEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent.State;
-import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.TextSlide;
 
 /**
  * 
@@ -78,35 +77,9 @@ public class MainFrame extends JFrame
 		EventBus.publish(new BlackoutEvent(!_blackout));
 		_blackout = !_blackout;
 	    }
-
 	});
 
 	btnPanel.add(blackoutBtn);
-
-	final String[] verses = {
-	        "Yours for ever! God of love\nhear us from Your throne above;\nYours for ever may we be,\nhere and in eternity.",
-	        "Yours for ever! Lord of life,\nshield us through our earthly strife;\nYou the life, the truth, the way,\nguide us to the realms of day.",
-	        "Yours for ever! O how blessed\nthey who find in You their rest!\nSaviour, guardian, heavenly friend,\nO defend us to the end." };
-
-	JButton slideBtn = new JButton("Slide");
-	slideBtn.addActionListener(new ActionListener() {
-	    int idx = 0;
-
-	    @Override
-	    public void actionPerformed(ActionEvent e)
-	    {
-		if (idx == verses.length)
-		{
-		    idx = 0;
-		}
-		String verse = verses[idx++];
-
-		TextSlide slide = new TextSlide(verse);
-		EventBus.publish(new ChangeSlideEvent(slide));
-	    }
-	});
-
-	btnPanel.add(slideBtn);
 
 	add(btnPanel, BorderLayout.SOUTH);
 
@@ -121,11 +94,13 @@ public class MainFrame extends JFrame
 	JButton addSongBtn = new JButton(new AddSongAction());
 	songBtnPanel.add(addSongBtn);
 
-	JButton editSongBtn = new JButton("Edit");
+	JButton editSongBtn = new JButton(new EditSongAction());
 	songBtnPanel.add(editSongBtn);
 
 	songPanel.add(songBtnPanel, BorderLayout.SOUTH);
 
 	add(songPanel, BorderLayout.WEST);
+	
+	
     }
 }
