@@ -18,6 +18,7 @@ import org.bushe.swing.event.EventBus;
 
 import uk.me.phillsacre.lyricdisplay.main.ui.actions.AddSongAction;
 import uk.me.phillsacre.lyricdisplay.main.ui.actions.EditSongAction;
+import uk.me.phillsacre.lyricdisplay.main.ui.components.SongInfoPanel;
 import uk.me.phillsacre.lyricdisplay.main.ui.components.SongList;
 import uk.me.phillsacre.lyricdisplay.presenter.events.BlackoutEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent;
@@ -100,7 +101,9 @@ public class MainFrame extends JFrame
 	songPanel.add(songBtnPanel, BorderLayout.SOUTH);
 
 	add(songPanel, BorderLayout.WEST);
-	
-	
+
+	SongInfoPanel songInfoPanel = new SongInfoPanel();
+
+	add(songInfoPanel, BorderLayout.CENTER);
     }
 }

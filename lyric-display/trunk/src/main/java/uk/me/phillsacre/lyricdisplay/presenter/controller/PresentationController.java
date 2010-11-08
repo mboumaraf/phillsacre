@@ -20,6 +20,7 @@ import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEve
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangeSlideEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent.State;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationFrame;
+import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationPanel;
 
 /**
  * 
@@ -29,11 +30,13 @@ import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationFrame;
 @Named("presentationController")
 public class PresentationController
 {
-    private PresentationFrame _presentation;
+    private PresentationPanel _presentation;
+    private PresentationFrame _frame;
 
     public PresentationController()
     {
-	_presentation = new PresentationFrame();
+	_presentation = new PresentationPanel();
+	_frame = new PresentationFrame(_presentation);
 
 	bind();
     }
@@ -94,11 +97,11 @@ public class PresentationController
 	if (devices.length == 1)
 	{
 	    // TODO Testing code - remove
-	    if (_presentation.isUndecorated())
+	    if (_frame.isUndecorated())
 	    {
-		_presentation.setUndecorated(false);
+		_frame.setUndecorated(false);
 	    }
-	    _presentation.setVisible(true);
+	    _frame.setVisible(true);
 	    _presentation.repaint();
 	    // _presentation.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
@@ -113,11 +116,11 @@ public class PresentationController
 
 	    if (gd.isFullScreenSupported())
 	    {
-		gd.setFullScreenWindow(_presentation);
+		gd.setFullScreenWindow(_frame);
 		SwingUtilities.invokeLater(new Runnable() {
 		    public void run()
 		    {
-			_presentation.render();
+			_presentation.repaint();
 		    }
 		});
 	    }
@@ -135,7 +138,7 @@ public class PresentationController
 
 	if (devices.length == 1)
 	{
-	    _presentation.setVisible(false);
+	    _frame.setVisible(false);
 	}
 	else
 	{
@@ -148,7 +151,7 @@ public class PresentationController
 	    if (gd.isFullScreenSupported())
 	    {
 		gd.setFullScreenWindow(null);
-		_presentation.setVisible(false);
+		_frame.setVisible(false);
 	    }
 	}
     }

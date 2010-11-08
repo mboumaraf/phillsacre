@@ -4,6 +4,7 @@
 package uk.me.phillsacre.lyricdisplay.main.ui.components;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -32,6 +33,7 @@ public class SongList extends JList
     {
 	setModel(new SongListModel());
 	setCellRenderer(new SongListCellRenderer());
+	setFont(getFont().deriveFont(Font.PLAIN));
 	addListSelectionListener(new ListSelectionListener() {
 	    @Override
 	    public void valueChanged(ListSelectionEvent e)

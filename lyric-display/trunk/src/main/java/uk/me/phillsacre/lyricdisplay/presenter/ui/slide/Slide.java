@@ -3,6 +3,9 @@
  */
 package uk.me.phillsacre.lyricdisplay.presenter.ui.slide;
 
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+
 /**
  * 
  * @author Phill
@@ -17,5 +20,5 @@ public interface Slide
 
     Type getType();
 
-    String getText();
+    void render(Graphics2D g2d, Rectangle bounds);
 }
