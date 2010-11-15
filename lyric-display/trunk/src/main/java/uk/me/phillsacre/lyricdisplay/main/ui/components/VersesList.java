@@ -18,6 +18,7 @@ import javax.swing.event.ListSelectionListener;
 
 import uk.me.phillsacre.lyricdisplay.LyricDisplay;
 import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController;
+import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController.VersesListUI;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationPanel;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 
@@ -27,7 +28,7 @@ import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
  * @author Phill
  * @since 5 Nov 2010
  */
-public class VersesList extends JList
+public class VersesList extends JList implements VersesListUI
 {
     private static final long serialVersionUID = 911957910035992863L;
 
@@ -40,6 +41,7 @@ public class VersesList extends JList
         final VersesListController controller =
                                                 LyricDisplay.getApplicationContext().getBean(
                                                         VersesListController.class );
+        controller.setUI( this );
 
         setModel( controller.getListModel() );
 
@@ -69,7 +71,7 @@ public class VersesList extends JList
             int height = (int) Math.round( width * 0.8 );
 
             PresentationPanel panel = new PresentationPanel();
-            panel.setSlide( slide );
+            panel.setSlide( slide, index );
             panel.setBorder( BorderFactory.createEtchedBorder() );
 
             JPanel container = new JPanel();
@@ -85,5 +87,12 @@ public class VersesList extends JList
 
             return container;
         }
+    }
+
+
+    @Override
+    public void resetSelection()
+    {
+        setSelectedIndex( 0 );
     }
 }

@@ -48,14 +48,14 @@ public class SongInfoListModel extends AbstractListModel
     {
         _song = song;
 
-        SongSlide first = new SongSlide( _song, 0 );
+        SongSlide first = new SongSlide( _song );
 
         _verses = new ArrayList<Slide>();
         _verses.add( first );
 
-        for ( int i = 1; i < first.getVerses().size(); i++ )
+        for ( int i = 1; i < first.getPageCount(); i++ )
         {
-            _verses.add( new SongSlide( _song, i ) );
+            _verses.add( new SongSlide( _song ) );
         }
 
         fireContentsChanged( this, 0, _verses.size() );

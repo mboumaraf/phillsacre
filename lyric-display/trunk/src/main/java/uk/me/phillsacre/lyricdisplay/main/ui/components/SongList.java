@@ -22,6 +22,7 @@ import uk.me.phillsacre.lyricdisplay.main.events.SelectSongEvent;
 import uk.me.phillsacre.lyricdisplay.main.ui.frame.EditSongDialog;
 import uk.me.phillsacre.lyricdisplay.main.ui.models.SongListModel;
 
+
 /**
  * 
  * @author Phill
@@ -31,84 +32,88 @@ public class SongList extends JList
 {
     public SongList()
     {
-	setModel(new SongListModel());
-	setCellRenderer(new SongListCellRenderer());
-	setFont(getFont().deriveFont(Font.PLAIN));
-	addListSelectionListener(new ListSelectionListener() {
-	    @Override
-	    public void valueChanged(ListSelectionEvent e)
-	    {
-		Song song = (Song) getSelectedValue();
+        setModel( new SongListModel() );
+        setCellRenderer( new SongListCellRenderer() );
+        setFont( getFont().deriveFont( Font.PLAIN ) );
+        addListSelectionListener( new ListSelectionListener()
+        {
+            @Override
+            public void valueChanged( ListSelectionEvent e )
+            {
+                Song song = (Song) getSelectedValue();
 
-		EventBus.publish(new SelectSongEvent(song));
-	    }
-	});
+                EventBus.publish( new SelectSongEvent( song ) );
+            }
+        } );
 
-	addMouseListener(new MouseAdapter() {
-	    @Override
-	    public void mouseClicked(MouseEvent e)
-	    {
-		if (e.getClickCount() == 2)
-		{
-		    Song song = (Song) getSelectedValue();
-		    if (null != song)
-		    {
-			EditSongDialog dialog = new EditSongDialog(song);
-			dialog.setVisible(true);
-		    }
-		}
-	    }
-	});
+        addMouseListener( new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked( MouseEvent e )
+            {
+                if (e.getClickCount() == 2)
+                {
+                    Song song = (Song) getSelectedValue();
+                    if (null != song)
+                    {
+                        EditSongDialog dialog = new EditSongDialog( song );
+                        dialog.setVisible( true );
+                    }
+                }
+            }
+        } );
     }
+
 
     private static class SongListCellRenderer extends DefaultListCellRenderer
     {
-	@Override
-	public Component getListCellRendererComponent(JList list, Object value,
-	        int index, boolean isSelected, boolean cellHasFocus)
-	{
-	    JLabel label = (JLabel) super.getListCellRendererComponent(list,
-		    value, index, isSelected, cellHasFocus);
+        @Override
+        public Component getListCellRendererComponent( JList list,
+                                                       Object value,
+                                                       int index,
+                                                       boolean isSelected,
+                                                       boolean cellHasFocus )
+        {
+            JLabel label = (JLabel) super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
 
-	    Song song = (Song) value;
+            Song song = (Song) value;
 
-	    StringBuilder text = new StringBuilder();
-	    text.append("<html>");
-	    text.append("<b>" + song.getTitle() + "</b>");
+            StringBuilder text = new StringBuilder();
+            text.append( "<html>" );
+            text.append( "<b>" + song.getTitle() + "</b>" );
 
-	    String summary = getSummary(song);
+            String summary = getSummary( song );
 
-	    if (null != summary)
-	    {
-		text.append("<br/><font color='#777'><small><i>" + summary
-		        + "</i></small></font>");
-	    }
+            if (null != summary)
+            {
+                text.append( "<br/><font color='#777'><small><i>" + summary + "</i></small></font>" );
+            }
 
-	    label.setToolTipText(song.getTitle());
+            label.setToolTipText( song.getTitle() );
 
-	    text.append("</html>");
+            text.append( "</html>" );
 
-	    label.setText(text.toString());
-	    return label;
-	}
+            label.setText( text.toString() );
+            return label;
+        }
 
-	private String getSummary(Song song)
-	{
-	    String text = song.getText();
+        private String getSummary( Song song )
+        {
+            String text = song.getText();
 
-	    if (StringUtils.isBlank(text))
-	    {
-		return null;
-	    }
+            if (StringUtils.isBlank( text ))
+            {
+                return null;
+            }
 
-	    if (text.indexOf('\n') > -1)
-	    {
-		String firstLine = text.substring(0, text.indexOf('\n'));
-		return firstLine;
-	    }
+            if (text.indexOf( '\n' ) > -1)
+            {
+                String firstLine = text.substring( 0, text.indexOf( '\n' ) );
+                return firstLine;
+            }
 
-	    return text;
-	}
+            return text;
+        }
 
     }
 }

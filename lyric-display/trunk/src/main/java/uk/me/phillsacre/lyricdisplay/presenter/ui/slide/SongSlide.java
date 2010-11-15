@@ -22,24 +22,21 @@ import uk.me.phillsacre.lyricdisplay.main.entities.Song;
  */
 public class SongSlide extends TextSlide
 {
-    private int          _verse;
     private List<String> _verses;
 
 
-    public SongSlide( Song song, int verse )
+    public SongSlide( Song song )
     {
-        _verse = verse;
-
         _verses = parseSong( song.getText() );
     }
 
-    public List<String> getVerses()
+    public int getPageCount()
     {
-        return _verses;
+        return _verses == null ? 0 : _verses.size();
     }
 
     @Override
-    public void render( Graphics2D g2d, Rectangle bounds )
+    public void render( Graphics2D g2d, Rectangle bounds, int pageNo )
     {
         float size = Float.MAX_VALUE;
 
@@ -49,7 +46,7 @@ public class SongSlide extends TextSlide
             size = Math.min( size, getSize( g2d, bounds, verse.split( "\n" ) ) );
         }
 
-        drawText( g2d, bounds, _verses.get( _verse ).split( "\n" ), size );
+        drawText( g2d, bounds, _verses.get( pageNo ).split( "\n" ), size );
     }
 
     private static List<String> parseSong( String text )

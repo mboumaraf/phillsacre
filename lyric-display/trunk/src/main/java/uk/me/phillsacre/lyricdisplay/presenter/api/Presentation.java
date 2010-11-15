@@ -5,6 +5,7 @@ package uk.me.phillsacre.lyricdisplay.presenter.api;
 
 import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 
+
 /**
  * 
  * @author Phill
@@ -12,5 +13,5 @@ import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
  */
 public interface Presentation
 {
-    void setSlide(Slide slide);
+    void setSlide( Slide slide, int pageNo );
 }

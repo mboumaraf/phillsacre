@@ -27,7 +27,13 @@ public class StaticTextSlide extends TextSlide
     }
 
     @Override
-    public void render( Graphics2D g, Rectangle bounds )
+    public int getPageCount()
+    {
+        return 1;
+    }
+
+    @Override
+    public void render( Graphics2D g, Rectangle bounds, int pageNo )
     {
         String[] lines = _text.split( "<br/>" );
         for ( int i = 0; i < lines.length; i++ )

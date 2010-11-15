@@ -25,8 +25,15 @@ import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 @Named( "versesListController" )
 public class VersesListController
 {
+    public static interface VersesListUI
+    {
+        void resetSelection();
+    }
+
+
     private Song              _song;
     private SongInfoListModel _listModel;
+    private VersesListUI      _ui;
 
 
     @Inject
@@ -38,6 +45,11 @@ public class VersesListController
     public SongInfoListModel getListModel()
     {
         return _listModel;
+    }
+
+    public void setUI( VersesListUI ui )
+    {
+        _ui = ui;
     }
 
     public VersesListController()
@@ -53,7 +65,8 @@ public class VersesListController
 
                 if (_listModel.getSize() > 0)
                 {
-                    EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ) ) );
+                    EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ), 0 ) );
+                    _ui.resetSelection();
                 }
             }
         } );
@@ -69,7 +82,8 @@ public class VersesListController
 
                     if (_listModel.getSize() > 0)
                     {
-                        EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ) ) );
+                        EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ), 0 ) );
+                        _ui.resetSelection();
                     }
                 }
             }
@@ -78,6 +92,6 @@ public class VersesListController
 
     public void handleSelection( int index )
     {
-        EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( index ) ) );
+        EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( index ), index ) );
     }
 }

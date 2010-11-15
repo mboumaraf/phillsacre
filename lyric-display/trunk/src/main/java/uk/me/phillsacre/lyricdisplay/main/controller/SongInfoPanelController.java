@@ -30,7 +30,7 @@ public class SongInfoPanelController
             @Override
             public void onEvent( PreviewSlideEvent event )
             {
-                _presentation.setSlide( event.getSlide() );
+                _presentation.setSlide( event.getSlide(), event.getPageNo() );
             }
         } );
     }

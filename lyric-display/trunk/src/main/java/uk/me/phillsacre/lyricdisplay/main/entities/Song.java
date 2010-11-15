@@ -14,33 +14,34 @@ public class Song
     private String  _title;
     private String  _text;
 
+
     public Integer getId()
     {
-	return _id;
+        return _id;
     }
 
-    public void setId(Integer id)
+    public void setId( Integer id )
     {
-	_id = id;
+        _id = id;
     }
 
     public String getTitle()
     {
-	return _title;
+        return _title;
     }
 
-    public void setTitle(String title)
+    public void setTitle( String title )
     {
-	_title = title;
+        _title = title;
     }
 
     public String getText()
     {
-	return _text;
+        return _text;
     }
 
-    public void setText(String text)
+    public void setText( String text )
     {
-	_text = text;
+        _text = text;
     }
 }
