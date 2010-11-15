@@ -15,6 +15,7 @@ import uk.me.phillsacre.lyricdisplay.main.dao.SongsDAO;
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.SaveSongEvent;
 
+
 /**
  * 
  * @author Phill
@@ -27,40 +28,40 @@ public class SongListModel extends AbstractListModel
     private SongsDAO          _songsDAO;
     private List<Song>        _songs;
 
+
     public SongListModel()
     {
-	_songsDAO = LyricDisplay.getApplicationContext()
-	        .getBean(SongsDAO.class);
+        _songsDAO = LyricDisplay.getApplicationContext().getBean( SongsDAO.class );
 
-	_songs = _songsDAO.getSongs();
+        _songs = _songsDAO.getSongs();
 
-	EventBus.subscribeStrongly(SaveSongEvent.class,
-	        new EventSubscriber<SaveSongEvent>() {
+        EventBus.subscribeStrongly( SaveSongEvent.class, new EventSubscriber<SaveSongEvent>()
+        {
 
-		    @Override
-		    public void onEvent(SaveSongEvent event)
-		    {
-		        refreshSongs();
-		    }
-	        });
+            @Override
+            public void onEvent( SaveSongEvent event )
+            {
+                refreshSongs();
+            }
+        } );
     }
 
     @Override
-    public Object getElementAt(int index)
+    public Object getElementAt( int index )
     {
-	return _songs.get(index);
+        return _songs.get( index );
     }
 
     @Override
     public int getSize()
     {
-	return _songs.size();
+        return _songs.size();
     }
 
     private void refreshSongs()
     {
-	_songs = _songsDAO.getSongs();
+        _songs = _songsDAO.getSongs();
 
-	fireContentsChanged(this, 0, getSize());
+        fireContentsChanged( this, 0, getSize() );
     }
 }

@@ -6,6 +6,7 @@ package uk.me.phillsacre.lyricdisplay.main.ui.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Named;
 import javax.swing.AbstractListModel;
 
 import org.bushe.swing.event.EventBus;
@@ -13,6 +14,8 @@ import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.SelectSongEvent;
+import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
+import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.SongSlide;
 
 
 /**
@@ -20,25 +23,14 @@ import uk.me.phillsacre.lyricdisplay.main.events.SelectSongEvent;
  * @author Phill
  * @since 6 Nov 2010
  */
+@Named( "songInfoListModel" )
 public class SongInfoListModel extends AbstractListModel
 {
     private static final long serialVersionUID = -7475366613550379719L;
 
     private Song              _song;
-    private List<String>      _verses;
+    private List<Slide>       _verses;
 
-
-    public SongInfoListModel()
-    {
-        EventBus.subscribeStrongly( SelectSongEvent.class, new EventSubscriber<SelectSongEvent>()
-        {
-            @Override
-            public void onEvent( SelectSongEvent event )
-            {
-                updateSong( event.getSong() );
-            }
-        } );
-    }
 
     @Override
     public Object getElementAt( int index )
@@ -52,40 +44,20 @@ public class SongInfoListModel extends AbstractListModel
         return _verses == null ? 0 : _verses.size();
     }
 
-    private void updateSong( Song song )
+    public void updateSong( Song song )
     {
         _song = song;
 
-        String text = song.getText();
-        _verses = parseSong( text );
+        SongSlide first = new SongSlide( _song, 0 );
 
-        fireContentsChanged( this, 0, _verses.size() );
-    }
+        _verses = new ArrayList<Slide>();
+        _verses.add( first );
 
-    private static List<String> parseSong( String text )
-    {
-        String[] lines = text.split( "\n" );
-        List<String> verses = new ArrayList<String>();
-
-        StringBuilder verse = new StringBuilder();
-        verse.append( "<html>" );
-
-        for ( String line : lines )
+        for ( int i = 1; i < first.getVerses().size(); i++ )
         {
-            if (line.isEmpty())
-            {
-                verse.append( "</html>" );
-                verses.add( verse.toString() );
-                verse = new StringBuilder( "<html>" );
-            }
-            else
-            {
-                verse.append( line ).append( "<br/>" );
-            }
+            _verses.add( new SongSlide( _song, i ) );
         }
 
-        verses.add( verse.toString() );
-
-        return verses;
+        fireContentsChanged( this, 0, _verses.size() );
     }
 }

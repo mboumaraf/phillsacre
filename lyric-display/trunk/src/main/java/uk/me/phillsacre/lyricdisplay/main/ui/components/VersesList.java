@@ -4,18 +4,22 @@
 package uk.me.phillsacre.lyricdisplay.main.ui.components;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import uk.me.phillsacre.lyricdisplay.LyricDisplay;
 import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController;
-import uk.me.phillsacre.lyricdisplay.main.ui.models.SongInfoListModel;
+import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationPanel;
+import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 
 
 /**
@@ -30,13 +34,14 @@ public class VersesList extends JList
 
     public VersesList()
     {
-        setModel( new SongInfoListModel() );
         setFont( getFont().deriveFont( Font.PLAIN ) );
         setCellRenderer( new VersesListCellRenderer() );
 
         final VersesListController controller =
                                                 LyricDisplay.getApplicationContext().getBean(
                                                         VersesListController.class );
+
+        setModel( controller.getListModel() );
 
         addListSelectionListener( new ListSelectionListener()
         {
@@ -49,7 +54,7 @@ public class VersesList extends JList
     }
 
 
-    private static class VersesListCellRenderer extends DefaultListCellRenderer
+    private class VersesListCellRenderer extends DefaultListCellRenderer
     {
         @Override
         public Component getListCellRendererComponent( JList list,
@@ -58,12 +63,27 @@ public class VersesList extends JList
                                                        boolean isSelected,
                                                        boolean cellHasFocus )
         {
-            JLabel label = (JLabel) super.getListCellRendererComponent( list, value, index, isSelected, cellHasFocus );
+            Slide slide = (Slide) value;
 
-            label.setBorder( BorderFactory.createEmptyBorder( 0, 0, 10, 0 ) );
+            int width = VersesList.this.getWidth() - 10;
+            int height = (int) Math.round( width * 0.8 );
 
-            return label;
+            PresentationPanel panel = new PresentationPanel();
+            panel.setSlide( slide );
+            panel.setBorder( BorderFactory.createEtchedBorder() );
+
+            JPanel container = new JPanel();
+            container.setLayout( new GridLayout( 1, 1 ) );
+            container.add( panel );
+            container.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10 ) );
+            container.setPreferredSize( new Dimension( width, height ) );
+
+            if (isSelected)
+            {
+                container.setBackground( SystemColor.textHighlight );
+            }
+
+            return container;
         }
-
     }
 }

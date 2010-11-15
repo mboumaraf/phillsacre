@@ -6,7 +6,6 @@
 
 package uk.me.phillsacre.lyricdisplay.presenter.ui.slide;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -23,17 +22,20 @@ import uk.me.phillsacre.lyricdisplay.main.entities.Song;
  */
 public class SongSlide extends TextSlide
 {
-    private Song         _song;
     private int          _verse;
     private List<String> _verses;
 
 
     public SongSlide( Song song, int verse )
     {
-        _song = song;
         _verse = verse;
 
         _verses = parseSong( song.getText() );
+    }
+
+    public List<String> getVerses()
+    {
+        return _verses;
     }
 
     @Override

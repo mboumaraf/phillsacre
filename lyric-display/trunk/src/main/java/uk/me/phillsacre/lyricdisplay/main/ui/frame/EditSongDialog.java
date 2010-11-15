@@ -23,6 +23,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+
 /**
  * 
  * @author Phill
@@ -36,87 +37,89 @@ public class EditSongDialog extends JDialog
     private JTextField        _titleField;
     private JTextArea         _textArea;
 
-    public EditSongDialog(Song song)
+
+    public EditSongDialog( Song song )
     {
-	super(MainFrame.getInstance(), "Edit Song", true);
+        super( MainFrame.getInstance(), "Edit Song", true );
 
-	_song = song;
+        _song = song;
 
-	FormLayout layout = new FormLayout("p, 3dlu, fill:p:grow", "");
-	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-	builder.setDefaultDialogBorder();
-	builder.setDefaultRowSpec(RowSpec.decode("p"));
+        FormLayout layout = new FormLayout( "p, 3dlu, fill:p:grow", "" );
+        DefaultFormBuilder builder = new DefaultFormBuilder( layout );
+        builder.setDefaultDialogBorder();
+        builder.setDefaultRowSpec( RowSpec.decode( "p" ) );
 
-	_titleField = new JTextField();
-	_titleField.setText(_song.getTitle());
+        _titleField = new JTextField();
+        _titleField.setText( _song.getTitle() );
 
-	builder.append("Title", _titleField);
-	builder.appendRow(builder.getLineGapSpec());
-	builder.nextLine(2);
+        builder.append( "Title", _titleField );
+        builder.appendRow( builder.getLineGapSpec() );
+        builder.nextLine( 2 );
 
-	_textArea = new JTextArea();
-	_textArea.setText(_song.getText());
-	_textArea.setCaretPosition(0);
+        _textArea = new JTextArea();
+        _textArea.setText( _song.getText() );
+        _textArea.setCaretPosition( 0 );
 
-	CellConstraints cc = new CellConstraints();
+        CellConstraints cc = new CellConstraints();
 
-	builder.appendRow(RowSpec.decode("top:50dlu:grow"));
-	builder.append("Text");
-	builder.add(new JScrollPane(_textArea), cc.xy(builder.getColumn(),
-	        builder.getRow(), "fill, fill"));
-	builder.nextLine();
+        builder.appendRow( RowSpec.decode( "top:50dlu:grow" ) );
+        builder.append( "Text" );
+        builder.add( new JScrollPane( _textArea ), cc.xy( builder.getColumn(), builder.getRow(), "fill, fill" ) );
+        builder.nextLine();
 
-	setSize(600, 500);
+        setSize( 600, 500 );
 
-	setLocationRelativeTo(MainFrame.getInstance());
+        setLocationRelativeTo( MainFrame.getInstance() );
 
-	ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
-	btnBar.addGlue();
-	btnBar.addButton(new SaveAction());
-	btnBar.addRelatedGap();
-	btnBar.addButton(new CancelAction());
+        ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
+        btnBar.addGlue();
+        btnBar.addButton( new SaveAction() );
+        btnBar.addRelatedGap();
+        btnBar.addButton( new CancelAction() );
 
-	builder.append(btnBar.getPanel(), 3);
+        builder.append( btnBar.getPanel(), 3 );
 
-	setLayout(new BorderLayout());
-	add(builder.getPanel(), BorderLayout.CENTER);
+        setLayout( new BorderLayout() );
+        add( builder.getPanel(), BorderLayout.CENTER );
     }
 
     private void saveSong()
     {
-	_song.setTitle(_titleField.getText());
-	_song.setText(_textArea.getText());
+        _song.setTitle( _titleField.getText() );
+        _song.setText( _textArea.getText() );
 
-	EventBus.publish(new SaveSongEvent(_song));
+        EventBus.publish( new SaveSongEvent( _song ) );
     }
+
 
     private class SaveAction extends AbstractAction
     {
-	public SaveAction()
-	{
-	    super("Save");
-	}
+        public SaveAction()
+        {
+            super( "Save" );
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-	    saveSong();
-	    dispose();
-	}
+        @Override
+        public void actionPerformed( ActionEvent e )
+        {
+            saveSong();
+            dispose();
+        }
 
     }
 
+
     private class CancelAction extends AbstractAction
     {
-	public CancelAction()
-	{
-	    super("Cancel");
-	}
+        public CancelAction()
+        {
+            super( "Cancel" );
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-	    dispose();
-	}
+        @Override
+        public void actionPerformed( ActionEvent e )
+        {
+            dispose();
+        }
     }
 }
