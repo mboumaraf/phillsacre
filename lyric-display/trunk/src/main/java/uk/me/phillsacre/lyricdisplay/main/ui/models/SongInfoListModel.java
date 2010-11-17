@@ -9,11 +9,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.swing.AbstractListModel;
 
-import org.bushe.swing.event.EventBus;
-import org.bushe.swing.event.EventSubscriber;
-
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
-import uk.me.phillsacre.lyricdisplay.main.events.SelectSongEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.SongSlide;
 

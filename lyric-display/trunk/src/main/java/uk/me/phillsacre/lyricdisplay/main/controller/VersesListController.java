@@ -59,15 +59,7 @@ public class VersesListController
             @Override
             public void onEvent( SelectSongEvent event )
             {
-                _song = event.getSong();
-
-                _listModel.updateSong( _song );
-
-                if (_listModel.getSize() > 0)
-                {
-                    EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ), 0 ) );
-                    _ui.resetSelection();
-                }
+                updateSong( event.getSong() );
             }
         } );
 
@@ -76,16 +68,7 @@ public class VersesListController
             @Override
             public void onEvent( SaveSongEvent event )
             {
-                if (event.getSong() == _song)
-                {
-                    _listModel.updateSong( _song );
-
-                    if (_listModel.getSize() > 0)
-                    {
-                        EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ), 0 ) );
-                        _ui.resetSelection();
-                    }
-                }
+                updateSong( event.getSong() );
             }
         } );
     }
@@ -93,5 +76,18 @@ public class VersesListController
     public void handleSelection( int index )
     {
         EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( index ), index ) );
+    }
+
+    private void updateSong( Song song )
+    {
+        _song = song;
+
+        _listModel.updateSong( _song );
+
+        if (_listModel.getSize() > 0)
+        {
+            EventBus.publish( new PreviewSlideEvent( (Slide) _listModel.getElementAt( 0 ), 0 ) );
+            _ui.resetSelection();
+        }
     }
 }
