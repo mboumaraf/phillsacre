@@ -6,7 +6,6 @@ package uk.me.phillsacre.lyricdisplay.presenter.ui.slide;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-
 /**
  * 
  * @author Phill
@@ -16,9 +15,8 @@ public interface Slide
 {
     enum Type
     {
-        TEXT
+	TEXT
     }
-
 
     Type getType();
 
@@ -29,5 +27,13 @@ public interface Slide
      */
     int getPageCount();
 
-    void render( Graphics2D g2d, Rectangle bounds, int pageNo );
+    /**
+     * Retrieve the text representation of a slide, if possible.
+     * 
+     * @param pageNo
+     * @return
+     */
+    String getText(int pageNo);
+
+    void render(Graphics2D g2d, Rectangle bounds, int pageNo);
 }

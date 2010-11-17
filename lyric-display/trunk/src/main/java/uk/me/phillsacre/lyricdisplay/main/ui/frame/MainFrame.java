@@ -26,7 +26,6 @@ import uk.me.phillsacre.lyricdisplay.presenter.events.BlackoutEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent;
 import uk.me.phillsacre.lyricdisplay.presenter.events.ChangePresentationStateEvent.State;
 
-
 /**
  * 
  * @author Phill
@@ -38,91 +37,84 @@ public class MainFrame extends JFrame
 
     private static final MainFrame INSTANCE         = new MainFrame();
 
-
     public static MainFrame getInstance()
     {
-        return INSTANCE;
+	return INSTANCE;
     }
 
     private MainFrame()
     {
-        setTitle( "Lyric Display Test" );
-        setSize( 800, 600 );
-        setLocationRelativeTo( null );
-        setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
+	setTitle("Lyric Display Test");
+	setSize(1024, 768);
+	setLocationRelativeTo(null);
+	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        setLayout( new BorderLayout() );
+	setLayout(new BorderLayout());
 
-        JPanel btnPanel = new JPanel();
+	JPanel btnPanel = new JPanel();
 
-        JButton toggleMain = new JButton( "Toggle Main" );
-        toggleMain.addActionListener( new ActionListener()
-        {
-            private boolean _visible = false;
+	JButton toggleMain = new JButton("Toggle Main");
+	toggleMain.addActionListener(new ActionListener() {
+	    private boolean _visible = false;
 
+	    @Override
+	    public void actionPerformed(ActionEvent e)
+	    {
+		ChangePresentationStateEvent event = new ChangePresentationStateEvent(
+		        _visible ? State.DISABLED : State.ENABLED);
+		EventBus.publish(event);
 
-            @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                ChangePresentationStateEvent event =
-                                                     new ChangePresentationStateEvent( _visible
-                                                             ? State.DISABLED
-                                                             : State.ENABLED );
-                EventBus.publish( event );
+		_visible = !_visible;
+	    }
+	});
 
-                _visible = !_visible;
-            }
-        } );
+	btnPanel.add(toggleMain);
 
-        btnPanel.add( toggleMain );
+	JButton blackoutBtn = new JButton("Blackout");
+	blackoutBtn.addActionListener(new ActionListener() {
+	    private boolean _blackout = false;
 
-        JButton blackoutBtn = new JButton( "Blackout" );
-        blackoutBtn.addActionListener( new ActionListener()
-        {
-            private boolean _blackout = false;
+	    @Override
+	    public void actionPerformed(ActionEvent e)
+	    {
+		EventBus.publish(new BlackoutEvent(!_blackout));
+		_blackout = !_blackout;
+	    }
+	});
 
+	btnPanel.add(blackoutBtn);
 
-            @Override
-            public void actionPerformed( ActionEvent e )
-            {
-                EventBus.publish( new BlackoutEvent( !_blackout ) );
-                _blackout = !_blackout;
-            }
-        } );
+	add(btnPanel, BorderLayout.SOUTH);
 
-        btnPanel.add( blackoutBtn );
+	JPanel columnPanel = new JPanel();
+	columnPanel.setLayout(new GridLayout(1, 3));
 
-        add( btnPanel, BorderLayout.SOUTH );
+	SongList songList = new SongList();
+	JPanel songPanel = new JPanel();
+	songPanel.setLayout(new BorderLayout());
+	songPanel.setBorder(BorderFactory.createTitledBorder("Songs"));
+	songPanel.add(new JScrollPane(songList), BorderLayout.CENTER);
 
-        JPanel columnPanel = new JPanel();
-        columnPanel.setLayout( new GridLayout( 1, 3 ) );
+	JPanel songBtnPanel = new JPanel();
 
-        SongList songList = new SongList();
-        JPanel songPanel = new JPanel();
-        songPanel.setLayout( new BorderLayout() );
-        songPanel.setBorder( BorderFactory.createTitledBorder( "Songs" ) );
-        songPanel.add( new JScrollPane( songList ), BorderLayout.CENTER );
+	JButton addSongBtn = new JButton(new AddSongAction());
+	songBtnPanel.add(addSongBtn);
 
-        JPanel songBtnPanel = new JPanel();
+	JButton editSongBtn = new JButton(new EditSongAction());
+	songBtnPanel.add(editSongBtn);
 
-        JButton addSongBtn = new JButton( new AddSongAction() );
-        songBtnPanel.add( addSongBtn );
+	songPanel.add(songBtnPanel, BorderLayout.SOUTH);
 
-        JButton editSongBtn = new JButton( new EditSongAction() );
-        songBtnPanel.add( editSongBtn );
+	columnPanel.add(songPanel);
 
-        songPanel.add( songBtnPanel, BorderLayout.SOUTH );
+	SongInfoPanel songInfoPanel = new SongInfoPanel();
 
-        columnPanel.add( songPanel);
+	columnPanel.add(songInfoPanel);
 
-        SongInfoPanel songInfoPanel = new SongInfoPanel();
+	LivePanel livePanel = new LivePanel();
 
-        columnPanel.add( songInfoPanel );
+	columnPanel.add(livePanel);
 
-        LivePanel livePanel = new LivePanel();
-
-        columnPanel.add( livePanel );
-
-        add( columnPanel, BorderLayout.CENTER );
+	add(columnPanel, BorderLayout.CENTER);
     }
 }

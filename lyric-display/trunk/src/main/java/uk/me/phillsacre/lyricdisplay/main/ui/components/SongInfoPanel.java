@@ -54,7 +54,7 @@ public class SongInfoPanel extends JPanel
             public void componentResized( ComponentEvent event )
             {
                 int width = event.getComponent().getWidth();
-                int height = (int) Math.round( width * 0.8 );
+                int height = (int) Math.round( width * 0.75 );
 
                 _presentation.setPreferredSize( new Dimension( width, height ) );
             }

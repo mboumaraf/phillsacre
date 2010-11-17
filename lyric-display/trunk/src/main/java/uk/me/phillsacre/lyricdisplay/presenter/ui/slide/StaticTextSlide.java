@@ -9,7 +9,6 @@ package uk.me.phillsacre.lyricdisplay.presenter.ui.slide;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-
 /**
  * Static Text slide
  * 
@@ -20,29 +19,34 @@ public class StaticTextSlide extends TextSlide
 {
     private final String _text;
 
-
-    public StaticTextSlide( String text )
+    public StaticTextSlide(String text)
     {
-        _text = text;
+	_text = text;
     }
 
     @Override
     public int getPageCount()
     {
-        return 1;
+	return 1;
     }
 
     @Override
-    public void render( Graphics2D g, Rectangle bounds, int pageNo )
+    public void render(Graphics2D g, Rectangle bounds, int pageNo)
     {
-        String[] lines = _text.split( "<br/>" );
-        for ( int i = 0; i < lines.length; i++ )
-        {
-            lines[ i ] = stripHtml( lines[ i ] );
-        }
+	String[] lines = _text.split("<br/>");
+	for (int i = 0; i < lines.length; i++)
+	{
+	    lines[i] = stripHtml(lines[i]);
+	}
 
-        float pointSize = getSize( g, bounds, lines );
+	float pointSize = getSize(g, bounds, lines);
 
-        drawText( g, bounds, lines, pointSize );
+	drawText(g, bounds, lines, pointSize);
+    }
+
+    @Override
+    public String getText(int pageNo)
+    {
+	return _text;
     }
 }
