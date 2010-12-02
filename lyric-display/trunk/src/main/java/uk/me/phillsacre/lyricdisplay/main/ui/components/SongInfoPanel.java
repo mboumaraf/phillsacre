@@ -18,6 +18,7 @@ import org.bushe.swing.event.EventBus;
 
 import uk.me.phillsacre.lyricdisplay.LyricDisplay;
 import uk.me.phillsacre.lyricdisplay.main.controller.SongInfoPanelController;
+import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.PresentationPanel;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
@@ -55,6 +56,10 @@ public class SongInfoPanel extends JPanel
 	add(btnBar.getPanel(), BorderLayout.NORTH);
 
 	VersesList versesList = new VersesList();
+	final VersesListController controller = LyricDisplay
+	        .getApplicationContext().getBean(VersesListController.class);
+	controller.setUI(versesList);
+	
 	add(new JScrollPane(versesList), BorderLayout.CENTER);
 
 	add(_presentation, BorderLayout.SOUTH);

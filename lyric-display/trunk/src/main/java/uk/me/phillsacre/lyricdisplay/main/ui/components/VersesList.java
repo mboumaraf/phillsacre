@@ -13,11 +13,8 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.ListModel;
 
-import uk.me.phillsacre.lyricdisplay.LyricDisplay;
-import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController;
 import uk.me.phillsacre.lyricdisplay.main.controller.VersesListController.VersesListUI;
 import uk.me.phillsacre.lyricdisplay.presenter.ui.slide.Slide;
 
@@ -34,20 +31,6 @@ public class VersesList extends JList implements VersesListUI
     {
 	setFont(getFont().deriveFont(Font.PLAIN));
 	setCellRenderer(new VersesListCellRenderer());
-
-	final VersesListController controller = LyricDisplay
-	        .getApplicationContext().getBean(VersesListController.class);
-	controller.setUI(this);
-
-	setModel(controller.getListModel());
-
-	addListSelectionListener(new ListSelectionListener() {
-	    @Override
-	    public void valueChanged(ListSelectionEvent e)
-	    {
-		controller.handleSelection(getSelectedIndex());
-	    }
-	});
     }
 
     private class VersesListCellRenderer extends DefaultListCellRenderer
@@ -76,5 +59,11 @@ public class VersesList extends JList implements VersesListUI
     public void resetSelection()
     {
 	setSelectedIndex(0);
+    }
+
+    @Override
+    public void setListModel(ListModel listModel)
+    {
+	this.setModel(listModel);
     }
 }

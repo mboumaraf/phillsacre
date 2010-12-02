@@ -38,6 +38,9 @@ public class LivePanel extends JPanel
 	        .getBean(LivePanelController.class);
 
 	VersesList versesList = new VersesList();
+	controller.setUI(versesList);
+	
+	
 	add(new JScrollPane(versesList));
     }
 }
