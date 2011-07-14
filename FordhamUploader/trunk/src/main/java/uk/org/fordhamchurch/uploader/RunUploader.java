@@ -1,3 +1,4 @@
+package uk.org.fordhamchurch.uploader;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import javax.swing.UIManager;
