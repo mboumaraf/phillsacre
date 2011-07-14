@@ -9,6 +9,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -39,9 +40,44 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
     @Override
     protected InputStream getInputStream() throws XmlRpcException
     {
-        InputStream input = super.getInputStream();
+        try
+        {
+            InputStream input = super.getInputStream();
 
-        return new LoggingInputStream( input );
+            return new LoggingInputStream( input );
+        }
+        catch ( XmlRpcException e )
+        {
+            HttpURLConnection conn = (HttpURLConnection) getURLConnection();
+            InputStream errorStream = conn.getErrorStream();
+
+            if (null == errorStream)
+            {
+                LOG.error( "ErrorStream is null!" );
+            }
+            else
+            {
+                ByteArrayOutputStream output = new ByteArrayOutputStream( 1024 * 30 );
+                byte[] buffer = new byte[ 1024 ];
+                int read;
+
+                try
+                {
+                    while ( (read = errorStream.read( buffer )) != -1)
+                    {
+                        output.write( buffer, 0, read );
+                    }
+                }
+                catch ( IOException ioe )
+                {
+                    throw new RuntimeException( "Could not read error stream", ioe );
+                }
+
+                logXml( "Error response", output.toString() );
+            }
+
+            throw e;
+        }
     }
 
     @Override
@@ -70,7 +106,7 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
                     }
                 };
                 pWriter.write( output );
-                logXml( "Sent Data", buffer.toString( "UTF-8" ) );
+                logXml( "Sent Data", buffer.toString() );
             }
         };
         super.writeRequest( loggingWriter );
@@ -104,7 +140,7 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
 
             if (read == -1)
             {
-                logXml( "Received Data", _buffer.toString( "UTF-8" ) );
+                logXml( "Received Data", _buffer.toString() );
             }
             else
             {

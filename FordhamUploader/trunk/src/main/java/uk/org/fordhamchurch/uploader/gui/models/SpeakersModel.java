@@ -1,6 +1,7 @@
 package uk.org.fordhamchurch.uploader.gui.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -41,7 +42,7 @@ public class SpeakersModel extends AbstractListModel implements ComboBoxModel
 
     public void setSelectedItem( Object anItem )
     {
-        _selected = (Speaker)anItem;
+        _selected = (Speaker) anItem;
     }
 
     /* === Private Methods ==================================== */
@@ -55,9 +56,10 @@ public class SpeakersModel extends AbstractListModel implements ComboBoxModel
         {
             public void run()
             {
-                List<Speaker> books = FordhamDAO.getInstance().getSpeakers();
+                List<Speaker> speakers = FordhamDAO.getInstance().getSpeakers();
                 _speakers.clear();
-                _speakers.addAll( books );
+                _speakers.addAll( speakers );
+                Collections.sort( _speakers );
 
                 fireContentsChanged( SpeakersModel.this, 0, _speakers.size() );
             }

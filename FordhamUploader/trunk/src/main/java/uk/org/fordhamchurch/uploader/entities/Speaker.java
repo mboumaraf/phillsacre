@@ -1,6 +1,6 @@
 package uk.org.fordhamchurch.uploader.entities;
 
-public class Speaker
+public class Speaker implements Comparable<Speaker>
 {
     private Long   _id;
     private String _name;
@@ -21,8 +21,7 @@ public class Speaker
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public void setId( Long id )
     {
@@ -38,8 +37,7 @@ public class Speaker
     }
 
     /**
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public void setName( String name )
     {
@@ -50,5 +48,10 @@ public class Speaker
     public String toString()
     {
         return _name;
+    }
+
+    public int compareTo( Speaker o )
+    {
+        return _name == null ? -1 : _name.compareTo( o._name );
     }
 }
