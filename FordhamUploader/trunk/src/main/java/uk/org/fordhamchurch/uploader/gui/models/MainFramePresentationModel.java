@@ -41,6 +41,11 @@ public class MainFramePresentationModel extends PresentationModel<Upload>
             result.addError( "You must specify a Date" );
         }
 
+        if ( !ValidationUtils.isNumeric( upload.getChapter() ))
+        {
+            result.addError( "Chapter must be numeric" );
+        }
+
         return result;
     }
 }
