@@ -1,0 +1,18 @@
+<project name="Fordham Uploader Launcher" default="launch" basedir="..">
+
+    <property name="base.dir" value="${basedir}"/>
+
+	<property name="res.dir" value="${base.dir}/res" />
+    <property name="lib.dir" value="${base.dir}/lib"/>
+
+    <path id="base.class.path">
+        <pathelement path="${res.dir}"/>
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+
+    <target name="launch">
+        <launch classname="RunUploader">
+            <classpath refid="base.class.path"/>
+        </launch>
+    </target>
+</project>
