@@ -55,6 +55,13 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
 
                 FilterOutputStream output = new FilterOutputStream( pStream )
                 {
+                    public void write( int b ) throws IOException
+                    {
+                        super.write( b );
+
+                        buffer.write( b );
+                    }
+
                     public void write( byte[] b, int off, int len ) throws IOException
                     {
                         super.write( b, off, len );
@@ -63,7 +70,7 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
                     }
                 };
                 pWriter.write( output );
-                logXml( "Sent Data", buffer.toString( "UTF8" ) );
+                logXml( "Sent Data", buffer.toString( "UTF-8" ) );
             }
         };
         super.writeRequest( loggingWriter );
@@ -81,13 +88,23 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
         }
 
         @Override
+        public int read() throws IOException
+        {
+            int b = super.read();
+
+            _buffer.write( b );
+
+            return b;
+        }
+
+        @Override
         public int read( byte[] b, int off, int len ) throws IOException
         {
             int read = super.read( b, off, len );
 
             if (read == -1)
             {
-                logXml( "Received Data", _buffer.toString( "UTF8" ) );
+                logXml( "Received Data", _buffer.toString( "UTF-8" ) );
             }
             else
             {
@@ -101,9 +118,7 @@ public class CustomXmlRpcTransport extends XmlRpcSunHttpTransport
 
     public static void logXml( String description, String xml )
     {
-        xml = xml.replace( "\n", "" );
-        xml = xml.replace( "\r", "" );
-        xml = xml.replaceAll( "[\\s]{2,}", "" ); // remove unnecessary spaces
+        xml = xml.replaceAll( "([ ]{2,}|\\r|\\n|\\t)", "" ); // remove unnecessary whitespace
 
         LOG.debug( description + " => " + xml );
     }
