@@ -10,6 +10,7 @@
 	<properties>
 		<slf4j.version>1.5.8</slf4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<tools.dir>${basedir}/src/main/bin/cdrtools</tools.dir>
 	</properties>
 
 	<build>

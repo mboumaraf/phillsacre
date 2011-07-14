@@ -15,6 +15,7 @@ import uk.org.fordhamchurch.uploader.encoder.MP3Normaliser;
 import uk.org.fordhamchurch.uploader.entities.Upload;
 import uk.org.fordhamchurch.uploader.gui.models.CDDriveModel.Drive;
 import uk.org.fordhamchurch.uploader.gui.models.ProgressPresentationModel;
+import uk.org.fordhamchurch.uploader.utils.ActionQueue.Action;
 
 import com.sshtools.j2ssh.FileTransferProgress;
 import com.sshtools.j2ssh.SftpClient;
@@ -36,6 +37,9 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
     private ProgressPresentationModel _pModel;
     private Upload                    _upload;
     private String                    _targetFilename;
+    private ActionQueue               _queue;
+    private File                      _wav;
+    private File                      _mp3;
 
 
     public UploadRunnerWorker( ProgressPresentationModel pModel, Upload upload )
@@ -51,43 +55,51 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
     {
         final File originalFile = _upload.getFile();
 
+        _queue = new ActionQueue( new ProgressListener()
+        {
+            public void updateProgress( int percentage )
+            {
+                setProgress( percentage );
+            }
+        } );
+
         try
         {
-            File mp3 = null;
-
             if (null == originalFile)
             {
-                File wav = ripCD();
-
-                mp3 = convertToMP3( wav );
-
-                if ( !wav.delete())
-                {
-                    _log.warn( "Could not delete WAV file" );
-                }
+                _queue.addAction( new RipCDAction() );
+                _queue.addAction( new ConvertMP3Action() );
             }
             else
             {
                 // If the file is an MP3 already, it will be re-coded in
                 // the required bitrate
-                mp3 = convertToMP3( originalFile );
+                _wav = originalFile;
+
+                _queue.addAction( new ConvertMP3Action() );
             }
 
-            normalise( mp3 );
+            _queue.addAction( new NormaliseAction() );
+            _queue.addAction( new UploadToWebsiteAction() );
+            _queue.addAction( new AddToDatabaseAction() );
 
-            uploadToWebsite( mp3 );
-
-            if ( !mp3.delete())
-            {
-                _log.warn( "Could not delete MP3 file" );
-            }
-
-            addToDatabase();
+            _queue.execute();
         }
         catch ( Exception e )
         {
             _log.error( "Could not upload", e );
             throw new RuntimeException( "Could not upload", e );
+        }
+        finally
+        {
+            if (null != _wav && _wav != originalFile && !_wav.delete())
+            {
+                _log.warn( "Could not delete WAV file" );
+            }
+            if (null != _mp3 && !_mp3.delete())
+            {
+                _log.warn( "Could not delete MP3 file" );
+            }
         }
 
         return null;
@@ -111,23 +123,81 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
         }
     }
 
-    private File ripCD()
-    {
-        publish( "Ripping CD..." );
 
+    private class RipCDAction implements Action
+    {
+        public void execute( ProgressListener progressListener )
+        {
+            publish( "Ripping CD..." );
+
+            _wav = ripCD( progressListener );
+
+            publish( "CD Rip complete" );
+        }
+    }
+
+
+    private class ConvertMP3Action implements Action
+    {
+        public void execute( ProgressListener progressListener )
+        {
+            publish( "Converting to MP3..." );
+
+            _mp3 = convertToMP3( _wav, progressListener );
+
+            publish( "MP3 Encode complete" );
+        }
+    }
+
+
+    private class NormaliseAction implements Action
+    {
+        public void execute( ProgressListener progressListener )
+        {
+            publish( "Normalising MP3..." );
+
+            normalise( _mp3, progressListener );
+
+            publish( "Normalise complete" );
+        }
+    }
+
+
+    private class UploadToWebsiteAction implements Action
+    {
+        public void execute( ProgressListener progressListener )
+        {
+            publish( "Uploading to website..." );
+
+            uploadToWebsite( _mp3, progressListener );
+
+            publish( "Upload complete" );
+        }
+    }
+
+
+    private class AddToDatabaseAction implements Action
+    {
+        public void execute( ProgressListener progressListener )
+        {
+            addToDatabase();
+        }
+    }
+
+
+    private File ripCD( ProgressListener progressListener )
+    {
         Drive drive = _upload.getCdLocation();
 
         _log.debug( "Drive: " + drive );
 
-        CDRipper ripper = CDRipper.getRipperForPlatform( drive, new DefaultProgressListener() );
+        CDRipper ripper = CDRipper.getRipperForPlatform( drive, progressListener );
 
         try
         {
             File rawFile = ripper.rip();
 
             _log.debug( "Rip complete, file size is: " + rawFile.length() + " bytes" );
-            publish( "CD Rip complete" );
-            setProgress( 100 );
 
             return rawFile;
         }
@@ -138,39 +208,24 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
         }
     }
 
-    private File convertToMP3( File wavFile )
+    private File convertToMP3( File wavFile, ProgressListener progressListener )
     {
-        publish( "Converting to MP3..." );
-        setProgress( 0 );
-
-        MP3Encoder encoder = new MP3Encoder( wavFile, _upload.getTitle(), new DefaultProgressListener() );
+        MP3Encoder encoder = new MP3Encoder( wavFile, _upload.getTitle(), progressListener );
         File mp3 = encoder.encode();
 
         _log.debug( "Encode complete, encoded file size is " + mp3.length() + " bytes" );
 
-        publish( "MP3 Encode complete" );
-        setProgress( 100 );
-
         return mp3;
     }
 
-    private void normalise( File mp3 )
+    private void normalise( File mp3, ProgressListener progressListener )
     {
-        publish( "Normalising MP3..." );
-        setProgress( 0 );
-
-        MP3Normaliser normaliser = new MP3Normaliser( mp3, new DefaultProgressListener() );
+        MP3Normaliser normaliser = new MP3Normaliser( mp3, progressListener );
         normaliser.normalise();
-
-        publish( "Normalise complete" );
-        setProgress( 100 );
     }
 
-    private void uploadToWebsite( File mp3File )
+    private void uploadToWebsite( File mp3File, ProgressListener progressListener )
     {
-        publish( "Uploading to website..." );
-        setProgress( 0 );
-
         String hostname = PropertyUtils.getProperty( "ftp.hostname" );
         String username = PropertyUtils.getProperty( "ftp.username" );
         String password = PropertyUtils.getProperty( "ftp.password" );
@@ -208,13 +263,11 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
             _log.info( String.format( "Uploading [%s] to [%s]", mp3File.getName(), sftp.pwd() + "/" + folders + "/"
                                                                                    + _targetFilename ) );
 
-            sftp.put( mp3File.getAbsolutePath(), _targetFilename, new DefaultProgressListener() );
+            sftp.put( mp3File.getAbsolutePath(), _targetFilename, new UploadProgressListener( progressListener ) );
 
             sftp.quit();
 
             client.disconnect();
-
-            publish( "Upload complete" );
         }
         catch ( Exception e )
         {
@@ -231,19 +284,25 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
     }
 
 
-    private class DefaultProgressListener implements ProgressListener, FileTransferProgress
+    private class UploadProgressListener implements ProgressListener, FileTransferProgress
     {
-        private long _bytesTotal;
+        private long             _bytesTotal;
+        private ProgressListener _wrapped;
 
+
+        public UploadProgressListener( ProgressListener wrapped )
+        {
+            _wrapped = wrapped;
+        }
 
         public void updateProgress( int percentage )
         {
-            setProgress( percentage );
+            _wrapped.updateProgress( percentage );
         }
 
         public void completed()
         {
-            setProgress( 100 );
+            updateProgress( 100 );
         }
 
         public boolean isCancelled()
@@ -253,7 +312,7 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
 
         public void progressed( long bytesSoFar )
         {
-            setProgress( (int) ( (bytesSoFar * 100) / _bytesTotal) );
+            updateProgress( (int) ( (bytesSoFar * 100) / _bytesTotal) );
         }
 
         /**
@@ -263,7 +322,6 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
         {
             _bytesTotal = bytesTotal;
         }
-
     }
 
 
