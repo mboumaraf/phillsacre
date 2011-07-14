@@ -260,8 +260,9 @@ public class UploadRunnerWorker extends SwingWorker<Void, String>
 
             sftp.cd( folders );
 
-            _log.info( String.format( "Uploading [%s] to [%s]", mp3File.getName(), sftp.pwd() + "/" + folders + "/"
-                                                                                   + _targetFilename ) );
+            _log
+                    .info( String.format( "Uploading [%s] to [%s]", mp3File.getName(), sftp.pwd() + "/"
+                                                                                       + _targetFilename ) );
 
             sftp.put( mp3File.getAbsolutePath(), _targetFilename, new UploadProgressListener( progressListener ) );
 
