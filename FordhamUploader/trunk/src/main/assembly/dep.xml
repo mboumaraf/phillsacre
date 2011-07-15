@@ -1,0 +1,31 @@
+<assembly>
+	<id>package</id>
+	<formats>
+		<format>zip</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>src/main/assembly</directory>
+			<outputDirectory>/</outputDirectory>
+			<excludes>
+				<exclude>dep.xml</exclude>
+				<exclude>run.bat</exclude>
+			</excludes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>${project.artifactId}.one-jar.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+	<files>
+		<file>
+			<source>src/main/assembly/run.bat</source>
+			<outputDirectory>/</outputDirectory>
+			<filtered>true</filtered>
+		</file>
+	</files>
+</assembly>
