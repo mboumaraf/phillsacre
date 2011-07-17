@@ -10,7 +10,6 @@
 			<outputDirectory>/</outputDirectory>
 			<excludes>
 				<exclude>dep.xml</exclude>
-				<exclude>run.bat</exclude>
 			</excludes>
 		</fileSet>
 		<fileSet>
@@ -21,11 +20,4 @@
 			</includes>
 		</fileSet>
 	</fileSets>
-	<files>
-		<file>
-			<source>src/main/assembly/run.bat</source>
-			<outputDirectory>/</outputDirectory>
-			<filtered>true</filtered>
-		</file>
-	</files>
 </assembly>
