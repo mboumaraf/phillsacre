@@ -22,42 +22,45 @@ import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 
-@SuppressWarnings("serial")
+
+@SuppressWarnings( "serial" )
 public class ProgressDialog extends JDialog
 {
     private JProgressBar              _progressBar;
     private JLabel                    _statusLabel;
     private ProgressPresentationModel _pModel;
 
-    public ProgressDialog(JFrame parent, Upload upload)
+
+    public ProgressDialog( JFrame parent, Upload upload )
     {
-	super(parent, true);
+        super( parent, true );
 
-	_pModel = new ProgressPresentationModel(upload);
+        _pModel = new ProgressPresentationModel( upload );
 
-	initGUI();
+        initGUI();
 
-	pack();
+        pack();
 
-	setResizable(false);
-	setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-	setLocationRelativeTo(parent);
+        setResizable( false );
+        setDefaultCloseOperation( WindowConstants.DO_NOTHING_ON_CLOSE );
+        setLocationRelativeTo( parent );
 
-	addWindowListener(new WindowAdapter() {
-	    /**
-	     * @param e
-	     */
-	    @Override
-	    public void windowClosing(WindowEvent e)
-	    {
-		if (_pModel.isComplete())
-		{
-		    dispose();
-		}
-	    }
-	});
+        addWindowListener( new WindowAdapter()
+        {
+            /**
+             * @param e
+             */
+            @Override
+            public void windowClosing( WindowEvent e )
+            {
+                if (_pModel.isComplete())
+                {
+                    dispose();
+                }
+            }
+        } );
 
-	_pModel.startUpload();
+        _pModel.startUpload();
     }
 
     /**
@@ -65,78 +68,77 @@ public class ProgressDialog extends JDialog
      */
     private void initGUI()
     {
-	setTitle("Progress");
-	setLayout(new BorderLayout());
+        setTitle( "Progress" );
+        setLayout( new BorderLayout() );
 
-	BeanAdapter<ProgressPresentationModel> adapter = new BeanAdapter<ProgressPresentationModel>(
-	        _pModel, true);
+        BeanAdapter<ProgressPresentationModel> adapter = new BeanAdapter<ProgressPresentationModel>( _pModel, true );
 
-	FormLayout layout = new FormLayout("p, 3dlu, fill:100dlu:grow");
-	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-	builder.setDefaultDialogBorder();
+        FormLayout layout = new FormLayout( "p, 3dlu, fill:100dlu:grow" );
+        DefaultFormBuilder builder = new DefaultFormBuilder( layout );
+        builder.setDefaultDialogBorder();
 
-	_progressBar = new JProgressBar(0, 100);
-	_progressBar.setValue(0);
+        _progressBar = new JProgressBar( 0, 100 );
+        _progressBar.setValue( 0 );
 
-	builder.appendSeparator("Progress");
-	builder.append(_progressBar, 3);
+        builder.appendSeparator( "Progress" );
+        builder.append( _progressBar, 3 );
 
-	_statusLabel = new JLabel(_pModel.getStatus());
+        _statusLabel = new JLabel( _pModel.getStatus() );
 
-	Bindings.bind(_statusLabel, adapter.getValueModel("status"));
-	Bindings.bind(_progressBar, "value",
-	        adapter.getValueModel("percentage"));
+        Bindings.bind( _statusLabel, adapter.getValueModel( "status" ) );
+        Bindings.bind( _progressBar, "value", adapter.getValueModel( "percentage" ) );
 
-	builder.append("Status: ", _statusLabel);
+        builder.append( "Status: ", _statusLabel );
 
-	ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
-	btnBar.addGlue();
-	btnBar.addButton(new CancelAction());
-	btnBar.addButton(new CloseAction());
+        ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
+        btnBar.addGlue();
+        btnBar.addButton( new CloseAction() );
+        btnBar.addButton( new CancelAction() );
 
-	builder.appendUnrelatedComponentsGapRow();
-	builder.nextRow();
+        builder.appendUnrelatedComponentsGapRow();
+        builder.nextRow();
 
-	builder.append(btnBar.getPanel(), 3);
+        builder.append( btnBar.getPanel(), 3 );
 
-	add(builder.getPanel(), BorderLayout.CENTER);
+        add( builder.getPanel(), BorderLayout.CENTER );
     }
+
 
     private class CloseAction extends AbstractAction
     {
-	public CloseAction()
-	{
-	    super("Close");
+        public CloseAction()
+        {
+            super( "Close" );
 
-	    setEnabled(false);
+            setEnabled( false );
 
-	    PropertyConnector.connect(this, "enabled", _pModel, "complete");
-	}
+            PropertyConnector.connect( this, "enabled", _pModel, "complete" );
+        }
 
-	/**
-	 * @param e
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-	    dispose();
-	}
+        /**
+         * @param e
+         */
+        public void actionPerformed( ActionEvent e )
+        {
+            dispose();
+        }
     }
+
 
     private class CancelAction extends AbstractAction
     {
-	public CancelAction()
-	{
-	    super("Cancel");
+        public CancelAction()
+        {
+            super( "Cancel" );
 
-	    setEnabled(true);
+            setEnabled( true );
 
-	    PropertyConnector
-		    .connect(this, "enabled", _pModel, "cancelEnabled");
-	}
+            PropertyConnector.connect( this, "enabled", _pModel, "cancelEnabled" );
+        }
 
-	public void actionPerformed(ActionEvent e)
-	{
-	    _pModel.cancel();
-	}
+        public void actionPerformed( ActionEvent e )
+        {
+            _pModel.cancel();
+        }
     }
 }
