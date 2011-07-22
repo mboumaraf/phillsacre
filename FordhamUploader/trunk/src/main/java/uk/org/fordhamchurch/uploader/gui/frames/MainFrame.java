@@ -23,9 +23,7 @@ import uk.org.fordhamchurch.uploader.entities.Book;
 import uk.org.fordhamchurch.uploader.entities.Speaker;
 import uk.org.fordhamchurch.uploader.entities.Upload;
 import uk.org.fordhamchurch.uploader.gui.components.FileChooser;
-import uk.org.fordhamchurch.uploader.gui.models.BibleBooksModel;
 import uk.org.fordhamchurch.uploader.gui.models.MainFramePresentationModel;
-import uk.org.fordhamchurch.uploader.gui.models.SpeakersModel;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
@@ -35,12 +33,12 @@ import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.validation.ValidationResult;
 
-@SuppressWarnings("serial")
+
+@SuppressWarnings( "serial" )
 public class MainFrame extends JFrame
 {
     private static final MainFrame     INSTANCE = new MainFrame();
-    private static final Logger        LOG      = LoggerFactory
-	                                                .getLogger(MainFrame.class);
+    private static final Logger        LOG      = LoggerFactory.getLogger( MainFrame.class );
 
     private MainFramePresentationModel _pModel;
 
@@ -50,120 +48,126 @@ public class MainFrame extends JFrame
     private JTextField                 _chapterField;
     private JTextField                 _dateField;
 
+
     private MainFrame()
     {
-	_pModel = new MainFramePresentationModel();
+        _pModel = new MainFramePresentationModel();
 
-	initGUI();
+        initGUI();
 
-	pack();
-	setLocationRelativeTo(null);
-	setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        pack();
+        setLocationRelativeTo( null );
+        setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE );
     }
 
     public static MainFrame getInstance()
     {
-	return INSTANCE;
+        return INSTANCE;
     }
 
     private void initGUI()
     {
-	BufferedImage image = null;
-	try
-	{
-	    image = ImageIO.read(MainFrame.class.getClassLoader().getResource(
-		    "icon.png"));
-	}
-	catch (IOException e)
-	{
-	    throw new RuntimeException("Could not load icon", e);
-	}
-	setIconImage(image);
-	
-	setLayout(new BorderLayout());
-	setTitle("Phripp: Fordham Sermon Uploader");
+        BufferedImage image = null;
+        try
+        {
+            image = ImageIO.read( MainFrame.class.getClassLoader().getResource( "icon.png" ) );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( "Could not load icon", e );
+        }
+        setIconImage( image );
 
-	FormLayout layout = new FormLayout("5dlu, p, 3dlu, fill:150dlu:grow",
-	        "");
-	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
+        setLayout( new BorderLayout() );
+        setTitle( "Phripp: Fordham Sermon Uploader" );
 
-	builder.setDefaultDialogBorder();
-	builder.setLeadingColumnOffset(1);
+        FormLayout layout = new FormLayout( "5dlu, p, 3dlu, fill:150dlu:grow", "" );
+        DefaultFormBuilder builder = new DefaultFormBuilder( layout );
 
-	builder.appendSeparator("Sermon Details");
+        builder.setDefaultDialogBorder();
+        builder.setLeadingColumnOffset( 1 );
 
-	FileChooser chooser = new FileChooser();
-	Bindings.bind(chooser, "file", _pModel.getModel("file"));
-	builder.append("File", chooser);
+        builder.appendSeparator( "Sermon Details" );
 
-	_sermonTitleField = BasicComponentFactory.createTextField(_pModel
-	        .getModel("title"));
-	builder.append("Title", _sermonTitleField);
+        FileChooser chooser = new FileChooser();
+        Bindings.bind( chooser, "file", _pModel.getModel( "file" ) );
+        builder.append( "File", chooser );
+        chooser
+                .setToolTipText( "Select the MP3 or WAV file the sermon was recorded to. If you do not select a file, the uploader will look for a CD to rip." );
 
-	ListModel speakersModel = new SpeakersModel();
-	ComboBoxAdapter<Speaker> speakerAdapter = new ComboBoxAdapter<Speaker>(
-	        speakersModel, _pModel.getModel("speaker"));
-	_speakerComboBox = new JComboBox(speakerAdapter);
-	builder.append("Speaker", _speakerComboBox);
+        _sermonTitleField = BasicComponentFactory.createTextField( _pModel.getModel( "title" ) );
+        _sermonTitleField
+                .setToolTipText( "The title of the sermon, include speaker name, for example: Aella Gage - Ephesians 5:1-15" );
+        builder.append( "Title", _sermonTitleField );
 
-	ListModel booksModel = new BibleBooksModel();
-	ComboBoxAdapter<Book> bookAdapter = new ComboBoxAdapter<Book>(
-	        booksModel, _pModel.getModel("book"));
-	_bibleBookComboBox = new JComboBox(bookAdapter);
-	builder.append("Bible Book", _bibleBookComboBox);
+        final ListModel speakersModel = _pModel.getSpeakersModel();
+        ComboBoxAdapter<Speaker> speakerAdapter =
+                                                  new ComboBoxAdapter<Speaker>(
+                                                          speakersModel, _pModel.getModel( "speaker" ) );
+        _speakerComboBox = new JComboBox( speakerAdapter );
+        _speakerComboBox
+                .setToolTipText( "The name of the speaker. 'Others' is a general term for anyone other than one of the regular speakers." );
+        builder.append( "Speaker", _speakerComboBox );
 
-	_chapterField = BasicComponentFactory.createTextField(_pModel
-	        .getModel("chapter"));
-	builder.append("Chapter", _chapterField);
+        final ListModel booksModel = _pModel.getBibleBooksModel();
+        ComboBoxAdapter<Book> bookAdapter = new ComboBoxAdapter<Book>( booksModel, _pModel.getModel( "book" ) );
+        _bibleBookComboBox = new JComboBox( bookAdapter );
+        _bibleBookComboBox
+                .setToolTipText( "The bible book for the sermon. You may only enter one per sermon. If there is no clear Bible passage, use 'Various'." );
+        builder.append( "Bible Book", _bibleBookComboBox );
 
-	_dateField = BasicComponentFactory.createFormattedTextField(
-	        _pModel.getModel("date"), "##-##-####");
-	builder.append("Date [dd-MM-yyyy]", _dateField);
+        _chapterField = BasicComponentFactory.createTextField( _pModel.getModel( "chapter" ) );
+        _chapterField
+                .setToolTipText( "The chapter of the Bible book. Leave blank if there is no specific chapter. Note that you can only enter ONE chapter in numeric format." );
+        builder.append( "Chapter", _chapterField );
 
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	_pModel.getBean().setDate(sdf.format(new Date()));
+        _dateField = BasicComponentFactory.createFormattedTextField( _pModel.getModel( "date" ), "##-##-####" );
+        _dateField.setToolTipText( "Please enter the date of the sermon in the format dd-MM-yyyy, e.g. 17-07-2011" );
+        builder.append( "Date [dd-MM-yyyy]", _dateField );
 
-	ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
-	btnBar.addGlue();
-	btnBar.addButton(new UploadAction());
+        SimpleDateFormat sdf = new SimpleDateFormat( "dd-MM-yyyy" );
+        _pModel.getBean().setDate( sdf.format( new Date() ) );
 
-	builder.appendRelatedComponentsGapRow();
-	builder.nextRow();
+        ButtonBarBuilder2 btnBar = new ButtonBarBuilder2();
+        btnBar.addGlue();
+        btnBar.addButton( new UploadAction() );
 
-	builder.append(btnBar.getPanel(), 3);
+        builder.appendRelatedComponentsGapRow();
+        builder.nextRow();
 
-	add(builder.getPanel(), BorderLayout.CENTER);
+        builder.append( btnBar.getPanel(), 3 );
+
+        add( builder.getPanel(), BorderLayout.CENTER );
     }
+
 
     private class UploadAction extends AbstractAction
     {
-	public UploadAction()
-	{
-	    super("Upload");
-	}
+        public UploadAction()
+        {
+            super( "Upload" );
+        }
 
-	/**
-	 * @param e
-	 */
-	public void actionPerformed(ActionEvent e)
-	{
-	    ValidationResult result = _pModel.validate();
+        /**
+         * @param e
+         */
+        public void actionPerformed( ActionEvent e )
+        {
+            ValidationResult result = _pModel.validate();
 
-	    if (result.isEmpty())
-	    {
-		Upload upload = _pModel.getBean();
+            if (result.isEmpty())
+            {
+                Upload upload = _pModel.getBean();
 
-		LOG.debug("Starting upload");
-		ProgressDialog dialog = new ProgressDialog(MainFrame.this,
-		        upload);
-		dialog.setVisible(true);
-	    }
-	    else
-	    {
-		JOptionPane.showMessageDialog(MainFrame.this,
-		        result.getMessagesText(), "Validation Error",
-		        JOptionPane.ERROR_MESSAGE);
-	    }
-	}
+                LOG.debug( "Starting upload" );
+                ProgressDialog dialog = new ProgressDialog( MainFrame.this, upload );
+                dialog.setVisible( true );
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(
+                        MainFrame.this, result.getMessagesText(), "Validation Error", JOptionPane.ERROR_MESSAGE );
+            }
+        }
     }
 }

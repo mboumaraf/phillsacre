@@ -60,6 +60,12 @@ public class FileChooser extends JComponent
         _changeSupport.firePropertyChange( "file", oldFile, _file );
     }
 
+    @Override
+    public void setToolTipText( String text )
+    {
+        _textField.setToolTipText( text );
+    }
+
     public void addPropertyChangeListener( String propertyName, PropertyChangeListener listener )
     {
         _changeSupport.addPropertyChangeListener( propertyName, listener );
@@ -85,6 +91,7 @@ public class FileChooser extends JComponent
     {
         private static final long serialVersionUID = 7341663808313774659L;
 
+
         public ChooseFileAction()
         {
             super( "..." );
@@ -95,7 +102,6 @@ public class FileChooser extends JComponent
             JFileChooser chooser = new JFileChooser();
             chooser.setFileFilter( new FileFilter()
             {
-
                 @Override
                 public boolean accept( File pathname )
                 {

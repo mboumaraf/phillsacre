@@ -7,7 +7,6 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
-import uk.org.fordhamchurch.uploader.dao.FordhamDAO;
 import uk.org.fordhamchurch.uploader.entities.Speaker;
 
 
@@ -21,8 +20,6 @@ public class SpeakersModel extends AbstractListModel implements ComboBoxModel
     public SpeakersModel()
     {
         _speakers = new ArrayList<Speaker>();
-
-        loadSpeakers();
     }
 
     public Object getElementAt( int index )
@@ -45,27 +42,11 @@ public class SpeakersModel extends AbstractListModel implements ComboBoxModel
         _selected = (Speaker) anItem;
     }
 
-    /* === Private Methods ==================================== */
-
-    /**
-     * Load books from the DAO asynchronously.
-     */
-    private void loadSpeakers()
+    public void addAll( List<Speaker> speakers )
     {
-        Runnable r = new Runnable()
-        {
-            public void run()
-            {
-                List<Speaker> speakers = FordhamDAO.getInstance().getSpeakers();
-                _speakers.clear();
-                _speakers.addAll( speakers );
-                Collections.sort( _speakers );
+        _speakers.addAll( speakers );
+        Collections.sort( _speakers );
 
-                fireContentsChanged( SpeakersModel.this, 0, _speakers.size() );
-            }
-        };
-
-        Thread t = new Thread( r );
-        t.start();
+        fireContentsChanged( this, 0, _speakers.size() );
     }
 }

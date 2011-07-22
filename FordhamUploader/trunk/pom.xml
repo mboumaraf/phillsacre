@@ -87,7 +87,6 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<echo>Test</echo>
 								<copy todir="${project.build.directory}/assembly">
 									<fileset dir="src/main/assembly">
 										<exclude name="**/.svn" />

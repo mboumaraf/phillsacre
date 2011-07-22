@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.org.fordhamchurch.uploader.utils.CancelException;
 import uk.org.fordhamchurch.uploader.utils.CommandBuilder;
 
+
 /**
  * Implementation of CDRipper using the CDDA2WAV tool.
  * 
@@ -17,8 +18,7 @@ import uk.org.fordhamchurch.uploader.utils.CommandBuilder;
  */
 public class Cdda2WavCDRipper extends CDRipper
 {
-    private static final Log    _log              = LogFactory
-	                                                  .getLog(Cdda2WavCDRipper.class);
+    private static final Log    _log              = LogFactory.getLog( Cdda2WavCDRipper.class );
 
     private static final String FILENAME          = "cd-ripped.wav";
 
@@ -30,97 +30,95 @@ public class Cdda2WavCDRipper extends CDRipper
     private static final String ARG_GUI           = "-g";
     private static final String ARG_MONO          = "-m";
 
+
     @Override
     public File rip() throws Exception
     {
-	int trackCount = getTrackCount();
+        int trackCount = getTrackCount();
 
-	_log.debug("Number of tracks: " + trackCount);
+        _log.debug( "Number of tracks: " + trackCount );
 
-	return doRip(trackCount);
+        return doRip( trackCount );
     }
 
-    private File doRip(int trackCount)
+    private File doRip( int trackCount )
     {
-	_log.debug("Attempting to rip CD...");
+        _log.debug( "Attempting to rip CD..." );
 
-	try
-	{
-	    CommandBuilder builder = new CommandBuilder(CDDA2WAV_CMD);
-	    builder.addArgument(ARG_NO_INFO_FILES);
-	    builder.addArgument(ARG_GUI);
-	    builder.addArgument(ARG_MONO);
+        try
+        {
+            CommandBuilder builder = new CommandBuilder( CDDA2WAV_CMD );
+            builder.addArgument( ARG_NO_INFO_FILES );
+            builder.addArgument( ARG_GUI );
+            builder.addArgument( ARG_MONO );
 
-	    if (trackCount > 1)
-	    {
-		builder.addArgument(String.format(ARG_TRACKS, 1, trackCount));
-	    }
+            if (trackCount > 1)
+            {
+                builder.addArgument( String.format( ARG_TRACKS, 1, trackCount ) );
+            }
 
-	    builder.addArgument(FILENAME);
+            builder.addArgument( FILENAME );
 
-	    ProcessBuilder pb = builder.getProcess();
-	    pb.redirectErrorStream(true);
-	    Process p = pb.start();
+            ProcessBuilder pb = builder.getProcess();
+            pb.redirectErrorStream( true );
+            Process p = pb.start();
 
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(
-		    p.getInputStream()));
+            BufferedReader reader = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
 
-	    int filesDone = 0;
-	    int totalPercentage = 0;
+            int filesDone = 0;
+            int totalPercentage = 0;
 
-	    String line;
-	    while ((line = reader.readLine()) != null)
-	    {
-		if (line.contains("recorded successfully"))
-		{
-		    _log.debug(line);
+            String line;
+            while ( (line = reader.readLine()) != null)
+            {
+                if (line.contains( "recorded successfully" ))
+                {
+                    _log.debug( line );
 
-		    filesDone++;
-		    totalPercentage += (100 / trackCount);
-		}
-		else if (line.endsWith("%"))
-		{
-		    int percentage = Integer.parseInt(line.substring(
-			    line.lastIndexOf(' ') + 1, line.indexOf('%')));
+                    filesDone++ ;
+                    totalPercentage += (100 / trackCount);
+                }
+                else if (line.endsWith( "%" ))
+                {
+                    int percentage =
+                                     Integer
+                                             .parseInt( line.substring( line.lastIndexOf( ' ' ) + 1, line.indexOf( '%' ) ) );
 
-		    try
-		    {
-			setProgress(totalPercentage + (percentage / trackCount));
-		    }
-		    catch (CancelException e)
-		    {
-			p.destroy();
+                    try
+                    {
+                        setProgress( totalPercentage + (percentage / trackCount) );
+                    }
+                    catch ( CancelException e )
+                    {
+                        p.destroy();
 
-			File f = new File(new File(
-			        System.getProperty("java.io.tmpdir")), FILENAME);
-			f.delete();
+                        File f = new File( new File( System.getProperty( "java.io.tmpdir" ) ), FILENAME );
+                        f.delete();
 
-			return null;
-		    }
-		}
-	    }
+                        return null;
+                    }
+                }
+            }
 
-	    reader.close();
+            reader.close();
 
-	    p.waitFor();
-	    p = null;
-	}
-	catch (InterruptedException e)
-	{
-	    File f = new File(new File(System.getProperty("java.io.tmpdir")),
-		    FILENAME);
-	    f.delete();
+            p.waitFor();
+            p = null;
+        }
+        catch ( InterruptedException e )
+        {
+            File f = new File( new File( System.getProperty( "java.io.tmpdir" ) ), FILENAME );
+            f.delete();
 
-	    throw new CancelException();
-	}
-	catch (Exception e)
-	{
-	    _log.error("Could not rip CD", e);
-	    throw new RuntimeException("Could not rip CD", e);
-	}
+            throw new CancelException();
+        }
+        catch ( Exception e )
+        {
+            _log.error( "Could not rip CD", e );
+            throw new RuntimeException( "Could not rip CD", e );
+        }
 
-	return new File(new File(System.getProperty("java.io.tmpdir")),
-	        FILENAME);
+        return new File( new File( System.getProperty( "java.io.tmpdir" ) ), FILENAME );
     }
 
     /**
@@ -130,43 +128,41 @@ public class Cdda2WavCDRipper extends CDRipper
      */
     private int getTrackCount()
     {
-	CommandBuilder builder = new CommandBuilder(CDDA2WAV_CMD);
+        CommandBuilder builder = new CommandBuilder( CDDA2WAV_CMD );
 
-	builder.addArgument(ARG_NO_INFO_FILES);
-	builder.addArgument(ARG_INFO_ONLY);
-	builder.addArgument(ARG_GUI);
+        builder.addArgument( ARG_NO_INFO_FILES );
+        builder.addArgument( ARG_INFO_ONLY );
+        builder.addArgument( ARG_GUI );
 
-	try
-	{
-	    ProcessBuilder pb = builder.getProcess();
-	    pb.redirectErrorStream(true);
+        try
+        {
+            ProcessBuilder pb = builder.getProcess();
+            pb.redirectErrorStream( true );
 
-	    Process p = pb.start();
+            Process p = pb.start();
 
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(
-		    p.getInputStream()));
+            BufferedReader reader = new BufferedReader( new InputStreamReader( p.getInputStream() ) );
 
-	    int trackCount = -1;
+            int trackCount = -1;
 
-	    String line;
-	    while (null != (line = reader.readLine()))
-	    {
-		if (line.startsWith("Tracks:"))
-		{
-		    trackCount = Integer.parseInt(line.substring(7,
-			    line.indexOf(' ')));
-		}
-	    }
+            String line;
+            while (null != (line = reader.readLine()))
+            {
+                if (line.startsWith( "Tracks:" ))
+                {
+                    trackCount = Integer.parseInt( line.substring( 7, line.indexOf( ' ' ) ) );
+                }
+            }
 
-	    p.waitFor();
-	    p = null;
+            p.waitFor();
+            p = null;
 
-	    return trackCount;
-	}
-	catch (Exception e)
-	{
-	    _log.error("Could not get track count", e);
-	    throw new RuntimeException("Could not get track count", e);
-	}
+            return trackCount;
+        }
+        catch ( Exception e )
+        {
+            _log.error( "Could not get track count", e );
+            throw new RuntimeException( "Could not get track count", e );
+        }
     }
 }

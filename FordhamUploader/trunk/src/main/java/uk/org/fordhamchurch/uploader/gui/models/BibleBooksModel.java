@@ -6,7 +6,6 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
-import uk.org.fordhamchurch.uploader.dao.FordhamDAO;
 import uk.org.fordhamchurch.uploader.entities.Book;
 
 
@@ -20,8 +19,6 @@ public class BibleBooksModel extends AbstractListModel implements ComboBoxModel
     public BibleBooksModel()
     {
         _books = new ArrayList<Book>();
-
-        loadBooks();
     }
 
     public Object getSelectedItem()
@@ -31,7 +28,7 @@ public class BibleBooksModel extends AbstractListModel implements ComboBoxModel
 
     public void setSelectedItem( Object anItem )
     {
-        _selected = (Book)anItem;
+        _selected = (Book) anItem;
     }
 
     public Object getElementAt( int index )
@@ -44,27 +41,10 @@ public class BibleBooksModel extends AbstractListModel implements ComboBoxModel
         return _books.size();
     }
 
-    /* === Private Methods ==================================== */
-
-    /**
-     * Load books from the DAO asynchronously.
-     */
-    private void loadBooks()
+    public void addAll( List<Book> books )
     {
-        Runnable r = new Runnable()
-        {
-            public void run()
-            {
-                List<Book> books = FordhamDAO.getInstance().getBooks();
-                _books.clear();
-                _books.addAll( books );
+        _books.addAll( books );
 
-                fireContentsChanged( BibleBooksModel.this, 0, _books.size() );
-            }
-        };
-
-        Thread t = new Thread( r );
-        t.start();
+        fireContentsChanged( this, 0, _books.size() );
     }
-
 }
