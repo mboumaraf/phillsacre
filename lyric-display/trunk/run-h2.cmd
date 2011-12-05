@@ -1,1 +1,0 @@
-call mvn exec:java -Dexec.mainClass="org.h2.tools.Server"
