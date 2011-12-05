@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.swing.AbstractListModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
@@ -42,14 +43,19 @@ public class AvailableSongsModel extends AbstractListModel<Song> implements
     @PostConstruct
     public void init()
     {
-	List<Song> songs = _songsDAO.getSongs();
+	refresh();
+    }
 
-	_songs.addAll(songs);
-	sortList();
-
-	fireContentsChanged(this, 0, _songs.size());
-
-	EventBus.subscribe(SongUpdatedEvent.class, this);
+    public void search(String text)
+    {
+	if (StringUtils.isBlank(text))
+	{
+	    refresh();
+	}
+	else
+	{
+	    // TODO Implement search
+	}
     }
 
     public int getSize()
@@ -90,6 +96,18 @@ public class AvailableSongsModel extends AbstractListModel<Song> implements
 
 	    fireContentsChanged(this, idx, idx + 1);
 	}
+    }
+
+    private void refresh()
+    {
+	List<Song> songs = _songsDAO.getSongs();
+
+	_songs.addAll(songs);
+	sortList();
+
+	fireContentsChanged(this, 0, _songs.size());
+
+	EventBus.subscribe(SongUpdatedEvent.class, this);
     }
 
     private void sortList()

@@ -39,8 +39,8 @@ public class AvailableSongsList extends JList<Song> implements
 
     public AvailableSongsList()
     {
-	ListModel<Song> availableSongsModel = App.getApplicationContext().getBean(
-	        AvailableSongsModel.class);
+	ListModel<Song> availableSongsModel = App.getApplicationContext()
+	        .getBean(AvailableSongsModel.class);
 
 	setModel(availableSongsModel);
 	setCellRenderer(new SongsCellRenderer());
@@ -68,6 +68,12 @@ public class AvailableSongsList extends JList<Song> implements
 	});
 
 	EventBus.subscribe(SongUpdatedEvent.class, this);
+    }
+
+    public void search(String text)
+    {
+	AvailableSongsModel model = (AvailableSongsModel) getModel();
+	model.search(text);
     }
 
     public void addSong(Song song)
