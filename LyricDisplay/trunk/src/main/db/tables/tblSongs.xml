@@ -1,0 +1,26 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="tblSongs" author="psacre">
+
+		<createTable tableName="tblSongs">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints nullable="false" primaryKey="true" />
+			</column>
+			<column name="title" type="varchar(256)">
+				<constraints nullable="false" />
+			</column>
+			<column name="author" type="varchar(250)"></column>
+			<column name="publisher" type="varchar(250)"></column>
+			<column name="year" type="int"></column>
+			<column name="copyright" type="varchar(250)"></column>
+			<column name="text" type="clob">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+	</changeSet>
+
+</databaseChangeLog>
