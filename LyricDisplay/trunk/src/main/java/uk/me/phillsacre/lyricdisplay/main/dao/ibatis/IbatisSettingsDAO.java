@@ -25,6 +25,7 @@ public class IbatisSettingsDAO extends GenericIbatisDAO implements SettingsDAO
 	        "Setting.selectByName", name);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Setting> getSettings()
     {
 	return getSqlMapClientTemplate().queryForList("Setting.selectAll");

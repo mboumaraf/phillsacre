@@ -16,5 +16,7 @@ public interface SongsDAO
 {
     List<Song> getSongs();
 
+    List<Song> searchSongs(String search);
+
     void saveOrUpdate(Song song);
 }

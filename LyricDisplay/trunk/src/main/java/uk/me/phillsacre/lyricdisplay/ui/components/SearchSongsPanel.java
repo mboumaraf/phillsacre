@@ -8,10 +8,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
+import uk.me.phillsacre.lyricdisplay.main.utils.Utils;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
@@ -38,11 +41,15 @@ public class SearchSongsPanel extends JPanel
 
 	add(sp, BorderLayout.CENTER);
 
-	FormLayout layout = new FormLayout("fill:p:grow, 3dlu, p");
+
+	FormLayout layout = new FormLayout("fill:p:grow, 3dlu, p, 1dlu, p");
 	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
 	builder.append(_searchField = new JTextField());
 	builder.append(new JButton(new SearchAction()));
+	builder.append(new JButton(new ClearAction()));
 
+	_searchField.setAction(new SearchAction());
+	
 	add(builder.getPanel(), BorderLayout.NORTH);
     }
 
@@ -52,7 +59,10 @@ public class SearchSongsPanel extends JPanel
 
 	public SearchAction()
 	{
-	    super("Search");
+	    putValue(SMALL_ICON,
+		    new ImageIcon(Utils.getImageURL("images/search.png")));
+	    putValue(SHORT_DESCRIPTION,
+		    "Search for a song containing the specified text");
 	}
 
 	@Override
@@ -60,6 +70,25 @@ public class SearchSongsPanel extends JPanel
 	{
 	    String value = _searchField.getText();
 	    _availableSongsList.search(value);
+	}
+    }
+
+    private class ClearAction extends AbstractAction
+    {
+	private static final long serialVersionUID = -3538212839192343416L;
+
+	public ClearAction()
+	{
+	    putValue(SMALL_ICON,
+		    new ImageIcon(Utils.getImageURL("images/cross.png")));
+	    putValue(SHORT_DESCRIPTION, "Clear the search box");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+	    _searchField.setText(null);
+	    _availableSongsList.search(null);
 	}
     }
 }

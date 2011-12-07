@@ -3,11 +3,19 @@
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
-	<!-- Tables -->
-	<include file="src/main/db/tables/tblSettings.xml" />
-	<include file="src/main/db/tables/tblSongs.xml" />
+	<changeSet id="init-fulltext" author="psacre">
+
+		<sql>
+			CREATE ALIAS IF NOT EXISTS FT_INIT FOR "org.h2.fulltext.FullText.init";
+			CALL FT_INIT();
+		</sql>
+
+	</changeSet>
 	
-	<!-- Fulltext search -->
-	<include file="src/main/db/fulltext.xml" />
+	<changeSet id="fulltext-songs" author="psacre">
+		<sql>
+			CALL FT_CREATE_INDEX('PUBLIC', 'TBLSONGS', NULL)
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

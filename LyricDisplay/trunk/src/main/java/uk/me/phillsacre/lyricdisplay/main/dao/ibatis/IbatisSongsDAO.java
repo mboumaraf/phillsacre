@@ -18,9 +18,17 @@ import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 @Named("songsDAO")
 public class IbatisSongsDAO extends GenericIbatisDAO implements SongsDAO
 {
+    @SuppressWarnings("unchecked")
     public List<Song> getSongs()
     {
 	return getSqlMapClientTemplate().queryForList("Song.selectAll");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Song> searchSongs(String search)
+    {
+	return getSqlMapClientTemplate().queryForList("Song.search", search);
     }
 
     public void saveOrUpdate(Song song)
@@ -36,4 +44,5 @@ public class IbatisSongsDAO extends GenericIbatisDAO implements SongsDAO
 	    getSqlMapClientTemplate().update("Song.update", song);
 	}
     }
+
 }

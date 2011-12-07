@@ -24,16 +24,23 @@
 		ORDER BY title ASC
 	]]></select>
 
+	<select id="search" resultMap="result"><![CDATA[
+		SELECT id, title, author, publisher, year, copyright, text
+		FROM tblSongs s, FT_SEARCH_DATA(#value#, 0, 0) ft
+		WHERE ft.table = 'TBLSONGS' AND s.id = ft.keys[0]
+		ORDER BY title ASC
+	]]></select>
+
 	<insert id="insert" parameterClass="Song">
 		INSERT INTO tblSongs (title, author, publisher, year, copyright, text)
 		VALUES (#title#, #author#, #publisher#, #year#, #copyright#, #text#)
-		
+
 		<selectKey resultClass="int">
 			SELECT SCOPE_IDENTITY()
 		</selectKey>
 	</insert>
-	
-	<update id="update" parameterClass="Song">
+
+	<update id="update" parameterClass="Song"><![CDATA[
 		UPDATE tblSongs
 		SET
 			title = #title#,
@@ -44,6 +51,6 @@
 			text = #text#
 		WHERE
 			id = #id#
-	</update>
+	]]></update>
 
 </sqlMap>

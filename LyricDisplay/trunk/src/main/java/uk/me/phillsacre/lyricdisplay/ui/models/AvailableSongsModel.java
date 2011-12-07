@@ -44,6 +44,8 @@ public class AvailableSongsModel extends AbstractListModel<Song> implements
     public void init()
     {
 	refresh();
+
+	EventBus.subscribe(SongUpdatedEvent.class, this);
     }
 
     public void search(String text)
@@ -54,7 +56,11 @@ public class AvailableSongsModel extends AbstractListModel<Song> implements
 	}
 	else
 	{
-	    // TODO Implement search
+	    _songs = _songsDAO.searchSongs(text);
+
+	    sortList();
+
+	    fireContentsChanged(this, 0, _songs.size());
 	}
     }
 
@@ -100,14 +106,14 @@ public class AvailableSongsModel extends AbstractListModel<Song> implements
 
     private void refresh()
     {
+	_songs.clear();
+
 	List<Song> songs = _songsDAO.getSongs();
 
 	_songs.addAll(songs);
 	sortList();
 
 	fireContentsChanged(this, 0, _songs.size());
-
-	EventBus.subscribe(SongUpdatedEvent.class, this);
     }
 
     private void sortList()
