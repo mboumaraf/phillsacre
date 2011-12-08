@@ -124,6 +124,8 @@ public class DefaultTextRenderer implements TextRenderer
 	// Run this on intialisation instead.
 	FontMetrics fm = g2d.getFontMetrics(f);
 
+	final int fontSize = f.getSize();
+
 	int maxWidth = 0;
 	for (String line : lines)
 	{
@@ -137,9 +139,10 @@ public class DefaultTextRenderer implements TextRenderer
 
 	float scaleFactor = Math.min(scaleFactorW, scaleFactorH);
 
-	int fontSize = f.getSize();
+	float defaultRowHeight = (float) bounds.getHeight() / 10.f;
+	float defaultScaleFactor = defaultRowHeight / fm.getHeight();
 
-	return Math.min(fontSize * scaleFactor, fontSize);
+	return Math.min(fontSize * scaleFactor, fontSize * defaultScaleFactor);
     }
 
     protected Font getFont()

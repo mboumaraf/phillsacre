@@ -46,7 +46,6 @@ public class BasePresentationComponent extends JComponent
 		repaint();
 	    }
 	});
-
     }
 
     public void setBlackout(boolean blackout)
