@@ -17,7 +17,7 @@ public class Song
     private String                _title;
     private String                _author;
     private String                _publisher;
-    private int                   _year;
+    private Integer               _year;
     private String                _copyright;
     private String                _text;
 
@@ -155,14 +155,14 @@ public class Song
 
     }
 
-    public int getYear()
+    public Integer getYear()
     {
 	return _year;
     }
 
-    public void setYear(int year)
+    public void setYear(Integer year)
     {
-	int oldYear = _year;
+	Integer oldYear = _year;
 	_year = year;
 
 	_changeSupport.firePropertyChange("year", oldYear, _year);

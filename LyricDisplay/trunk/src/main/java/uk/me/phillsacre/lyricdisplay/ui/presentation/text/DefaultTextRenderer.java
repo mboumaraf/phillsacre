@@ -28,10 +28,22 @@ import org.apache.commons.lang.StringUtils;
 public class DefaultTextRenderer implements TextRenderer
 {
     private FontStyle _fontStyle;
+    private boolean   _useDefaultRowHeight;
 
     public DefaultTextRenderer()
     {
-	_fontStyle = new FontStyle(Color.white, true, true);
+	this(new FontStyle(Color.white, true, true));
+    }
+
+    public DefaultTextRenderer(FontStyle fontStyle)
+    {
+	_fontStyle = fontStyle;
+	_useDefaultRowHeight = true;
+    }
+
+    public void setUseDefaultRowHeight(boolean useDefaultRowHeight)
+    {
+	_useDefaultRowHeight = useDefaultRowHeight;
     }
 
     public void renderText(Graphics2D g2d, String[] lines, float pointSize,
@@ -139,10 +151,16 @@ public class DefaultTextRenderer implements TextRenderer
 
 	float scaleFactor = Math.min(scaleFactorW, scaleFactorH);
 
-	float defaultRowHeight = (float) bounds.getHeight() / 10.f;
-	float defaultScaleFactor = defaultRowHeight / fm.getHeight();
+	if (_useDefaultRowHeight)
+	{
+	    float defaultRowHeight = (float) bounds.getHeight() / 10.f;
+	    float defaultScaleFactor = defaultRowHeight / fm.getHeight();
+	    
+	    return Math.min(fontSize * scaleFactor, fontSize
+		    * defaultScaleFactor);
+	}
 
-	return Math.min(fontSize * scaleFactor, fontSize * defaultScaleFactor);
+	return fontSize * scaleFactor;
     }
 
     protected Font getFont()
