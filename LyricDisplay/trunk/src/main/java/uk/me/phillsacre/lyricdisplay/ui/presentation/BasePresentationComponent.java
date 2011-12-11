@@ -15,6 +15,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+
+import uk.me.phillsacre.lyricdisplay.ui.presentation.DisplayPanel.RepaintListener;
 
 /**
  * 
@@ -60,6 +63,19 @@ public class BasePresentationComponent extends JComponent
 	_displayPanel = displayPanel;
 
 	repaint();
+
+	displayPanel.addRepaintListener(new RepaintListener() {
+	    @Override
+	    public void repaint()
+	    {
+		SwingUtilities.invokeLater(new Runnable() {
+		    public void run()
+		    {
+			BasePresentationComponent.this.repaint();
+		    }
+		});
+	    }
+	});
     }
 
     public void render(Graphics g)

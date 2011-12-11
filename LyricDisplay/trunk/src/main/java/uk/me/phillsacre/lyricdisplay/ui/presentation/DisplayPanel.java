@@ -13,4 +13,11 @@ import java.awt.Graphics2D;
 public interface DisplayPanel
 {
     void render(Graphics2D g2d, int width, int height);
+
+    void addRepaintListener(RepaintListener repaintListener);
+
+    public interface RepaintListener
+    {
+	void repaint();
+    }
 }

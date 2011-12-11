@@ -24,6 +24,7 @@ import uk.me.phillsacre.lyricdisplay.main.dao.SettingsDAO;
 import uk.me.phillsacre.lyricdisplay.main.entities.Setting;
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.SongSelectedEvent;
+import uk.me.phillsacre.lyricdisplay.ui.actions.SetDefaultBackgroundAction;
 import uk.me.phillsacre.lyricdisplay.ui.components.LiveSummaryPanel;
 import uk.me.phillsacre.lyricdisplay.ui.components.PreviewSummaryPanel;
 import uk.me.phillsacre.lyricdisplay.ui.components.SetListPanel;
@@ -75,8 +76,13 @@ public class MainFrame extends JFrame
 	songsMenu.add(new NewSongAction());
 	songsMenu.add(new EditSongAction());
 
+	JMenu setListMenu = new JMenu("Set List");
+	setListMenu.setMnemonic('l');
+	setListMenu.add(new SetDefaultBackgroundAction());
+
 	menuBar.add(fileMenu);
 	menuBar.add(songsMenu);
+	menuBar.add(setListMenu);
 
 	setJMenuBar(menuBar);
     }
@@ -93,7 +99,7 @@ public class MainFrame extends JFrame
 	}
 
 	setLocationRelativeTo(null);
-	
+
 	_splitPane.setDividerLocation(.5);
     }
 
