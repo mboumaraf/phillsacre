@@ -51,7 +51,8 @@ public class ChooseBackgroundDialog extends JDialog
     private JButton                   _colour2;
     private Color                     _topColor        = Color.blue;
     private Color                     _bottomColor     = Color.black;
-    private File                      _directory;
+    
+    private static File               _directory;
 
     public ChooseBackgroundDialog(Background background)
     {
