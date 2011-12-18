@@ -37,6 +37,13 @@ public class SetListModel extends AbstractListModel<SetListItem> implements
 	EventBus.subscribe(ModifySetListEvent.class, this);
     }
 
+    public void remove(SetListItem item)
+    {
+	_items.remove(item);
+
+	fireContentsChanged(this, 0, _items.size());
+    }
+
     @Override
     public int getSize()
     {

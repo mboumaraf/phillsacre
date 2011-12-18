@@ -38,10 +38,12 @@ public class SetList extends JList<SetListItem>
     private static final long serialVersionUID = -5668154135438746367L;
 
     private JPopupMenu        _menu;
+    private SetListModel      _model;
 
     public SetList()
     {
-	setModel(App.getApplicationContext().getBean(SetListModel.class));
+	setModel(_model = App.getApplicationContext().getBean(
+	        SetListModel.class));
 	setCellRenderer(new SetListRenderer());
 	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -94,6 +96,7 @@ public class SetList extends JList<SetListItem>
     {
 	JPopupMenu menu = new JPopupMenu();
 	menu.add(new SetBackgroundAction());
+	menu.add(new RemoveAction());
 
 	return menu;
     }
@@ -143,6 +146,24 @@ public class SetList extends JList<SetListItem>
 
 		EventBus.publish(new SetListItemUpdatedEvent(item));
 	    }
+	}
+    }
+
+    private class RemoveAction extends AbstractAction
+    {
+	private static final long serialVersionUID = 1442191833302033416L;
+
+	public RemoveAction()
+	{
+	    super("Remove");
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+	    SetListItem item = getSelectedValue();
+
+	    _model.remove(item);
 	}
     }
 }
