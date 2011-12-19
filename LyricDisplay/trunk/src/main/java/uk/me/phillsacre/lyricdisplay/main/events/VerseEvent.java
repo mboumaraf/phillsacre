@@ -4,6 +4,7 @@
 package uk.me.phillsacre.lyricdisplay.main.events;
 
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
+import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
 
 /**
  * 
@@ -12,13 +13,15 @@ import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
  */
 public class VerseEvent
 {
-    private String _text;
-    private Target _target;
+    private final String      _text;
+    private final Target      _target;
+    private final SetListItem _item;
 
-    public VerseEvent(Target target, String text)
+    public VerseEvent(Target target, SetListItem item, String text)
     {
 	_text = text;
 	_target = target;
+	_item = item;
     }
 
     public String getText()
@@ -29,5 +32,10 @@ public class VerseEvent
     public Target getTarget()
     {
 	return _target;
+    }
+
+    public SetListItem getItem()
+    {
+	return _item;
     }
 }

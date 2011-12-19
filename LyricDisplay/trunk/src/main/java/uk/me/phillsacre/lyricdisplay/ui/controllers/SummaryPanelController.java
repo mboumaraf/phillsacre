@@ -13,6 +13,7 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.main.events.ControlEvent;
+import uk.me.phillsacre.lyricdisplay.main.events.SetListControlEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.VerseEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.ui.models.VersesListModel;
@@ -66,7 +67,8 @@ public abstract class SummaryPanelController implements
 
 		if (null != verse)
 		{
-		    EventBus.publish(new VerseEvent(_target, verse));
+		    EventBus.publish(new VerseEvent(_target, _versesListModel
+			    .getItem(), verse));
 		}
 	    }
 	});
@@ -105,7 +107,8 @@ public abstract class SummaryPanelController implements
 	    {
 		final String verse = _ui.getSelectedVerse();
 
-		EventBus.publish(new VerseEvent(_target, verse));
+		EventBus.publish(new VerseEvent(_target, _versesListModel
+		        .getItem(), verse));
 	    }
 	});
     }
@@ -141,9 +144,13 @@ public abstract class SummaryPanelController implements
 	if (selectedIndex > 0)
 	{
 	    selectedIndex -= 1;
+	    _ui.setSelectedIndex(selectedIndex);
 	}
-
-	_ui.setSelectedIndex(selectedIndex);
+	else
+	{
+	    EventBus.publish(new SetListControlEvent(
+		    SetListControlEvent.Type.BACKWARD));
+	}
     }
 
     private void selectNextVerse()
@@ -153,8 +160,12 @@ public abstract class SummaryPanelController implements
 	if (selectedIndex < _versesListModel.getSize() - 1)
 	{
 	    selectedIndex += 1;
+	    _ui.setSelectedIndex(selectedIndex);
 	}
-
-	_ui.setSelectedIndex(selectedIndex);
+	else
+	{
+	    EventBus.publish(new SetListControlEvent(
+		    SetListControlEvent.Type.FORWARD));
+	}
     }
 }

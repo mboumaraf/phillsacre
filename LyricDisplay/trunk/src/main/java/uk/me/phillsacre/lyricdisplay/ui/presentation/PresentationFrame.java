@@ -18,7 +18,6 @@ import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.main.events.BlankScreenEvent;
-import uk.me.phillsacre.lyricdisplay.main.events.ChangeSetListSelectionEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.ControlEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.VerseEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
@@ -54,7 +53,6 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 
 	EventBus.subscribe(VerseEvent.class, PresentationFrame.this);
 	EventBus.subscribe(BlankScreenEvent.class, this);
-	EventBus.subscribe(ChangeSetListSelectionEvent.class, this);
 
 	addComponentListener(new ComponentAdapter() {
 	    @Override
@@ -79,9 +77,11 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 		{
 		    EventBus.publish(new ControlEvent(ControlEvent.Type.FORWARD));
 		}
-		else if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_UP)
+		else if (keyCode == KeyEvent.VK_LEFT
+		        || keyCode == KeyEvent.VK_UP)
 		{
-		    EventBus.publish(new ControlEvent(ControlEvent.Type.BACKWARD));
+		    EventBus.publish(new ControlEvent(
+			    ControlEvent.Type.BACKWARD));
 		}
 	    }
 	});
@@ -95,6 +95,7 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 	    final VerseEvent ve = (VerseEvent) event;
 	    if (ve.getTarget() == Target.LIVE)
 	    {
+		_item = ve.getItem();
 		_presentation
 		        .setDisplayPanel(new SongPanel(_item, ve.getText()));
 	    }
@@ -103,10 +104,6 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 	{
 	    boolean blank = ((BlankScreenEvent) event).isBlank();
 	    _presentation.setBlackout(blank);
-	}
-	else if (event instanceof ChangeSetListSelectionEvent)
-	{
-	    _item = ((ChangeSetListSelectionEvent) event).getItem();
 	}
     }
 }

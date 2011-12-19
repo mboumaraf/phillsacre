@@ -18,10 +18,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.ListSelectionModel;
 
 import org.bushe.swing.event.EventBus;
+import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.App;
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.ChangeSetListSelectionEvent;
+import uk.me.phillsacre.lyricdisplay.main.events.SetListControlEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.SetListItemUpdatedEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.main.utils.Utils;
@@ -50,6 +52,44 @@ public class SetList extends JList<SetListItem>
 	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
 	_menu = createPopupMenu();
+
+	EventBus.subscribeStrongly(SetListControlEvent.class,
+	        new EventSubscriber<SetListControlEvent>() {
+		    @Override
+		    public void onEvent(SetListControlEvent event)
+		    {
+		        switch (event.getType()) {
+			    case FORWARD:
+				nextSetListItem();
+				break;
+
+			    case BACKWARD:
+				previousSetListItem();
+				break;
+			}
+		    }
+	        });
+
+	EventBus.subscribeStrongly(ChangeSetListSelectionEvent.class,
+	        new EventSubscriber<ChangeSetListSelectionEvent>() {
+		    @Override
+		    public void onEvent(ChangeSetListSelectionEvent event)
+		    {
+		        if (event.getTarget() == Target.LIVE)
+		        {
+			    // When an item is moved to live, select the next
+			    // item in the list
+			    int index = getSelectedIndex();
+			    if (index >= 0 && index < _model.getSize() - 1)
+			    {
+			        setSelectedIndex(index + 1);
+			        EventBus.publish(new ChangeSetListSelectionEvent(
+			                Target.PREVIEW, getSelectedValue()));
+			    }
+
+		        }
+		    }
+	        });
 
 	addMouseListener(new MouseAdapter() {
 	    @Override
@@ -92,6 +132,34 @@ public class SetList extends JList<SetListItem>
 		}
 	    }
 	});
+    }
+
+    private void nextSetListItem()
+    {
+	final int index = getSelectedIndex();
+	final SetListItem item = getSelectedValue();
+
+	if (index < 0)
+	{
+	    return;
+	}
+
+	if (index < _model.getSize() - 1)
+	{
+	    EventBus.publish(new ChangeSetListSelectionEvent(Target.LIVE, item));
+	}
+    }
+
+    private void previousSetListItem()
+    {
+	final int index = getSelectedIndex();
+
+	if (index > 1)
+	{
+	    setSelectedIndex(index - 2);
+	    EventBus.publish(new ChangeSetListSelectionEvent(Target.LIVE,
+		    getSelectedValue()));
+	}
     }
 
     private JPopupMenu createPopupMenu()
