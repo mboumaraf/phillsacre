@@ -6,6 +6,10 @@ package uk.me.phillsacre.lyricdisplay.ui.presentation;
 import java.awt.BorderLayout;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -15,6 +19,7 @@ import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.main.events.BlankScreenEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.ChangeSetListSelectionEvent;
+import uk.me.phillsacre.lyricdisplay.main.events.ControlEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.VerseEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
@@ -58,7 +63,28 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 		_presentation.repaint();
 	    }
 	});
-
+	addMouseListener(new MouseAdapter() {
+	    @Override
+	    public void mouseClicked(MouseEvent e)
+	    {
+		EventBus.publish(new ControlEvent(ControlEvent.Type.FORWARD));
+	    }
+	});
+	addKeyListener(new KeyAdapter() {
+	    @Override
+	    public void keyPressed(KeyEvent e)
+	    {
+		final int keyCode = e.getKeyCode();
+		if (keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_DOWN)
+		{
+		    EventBus.publish(new ControlEvent(ControlEvent.Type.FORWARD));
+		}
+		else if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_UP)
+		{
+		    EventBus.publish(new ControlEvent(ControlEvent.Type.BACKWARD));
+		}
+	    }
+	});
     }
 
     @Override

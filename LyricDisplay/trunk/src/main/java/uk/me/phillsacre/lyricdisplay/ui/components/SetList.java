@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
@@ -23,6 +24,7 @@ import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.ChangeSetListSelectionEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.SetListItemUpdatedEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
+import uk.me.phillsacre.lyricdisplay.main.utils.Utils;
 import uk.me.phillsacre.lyricdisplay.ui.frames.ChooseBackgroundDialog;
 import uk.me.phillsacre.lyricdisplay.ui.models.SetListModel;
 import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
@@ -115,6 +117,8 @@ public class SetList extends JList<SetListItem>
 
 	    JLabel label = (JLabel) super.getListCellRendererComponent(list,
 		    song.getTitle(), index, isSelected, cellHasFocus);
+
+	    label.setIcon(new ImageIcon(Utils.getImageURL("images/song.png")));
 
 	    return label;
 	}

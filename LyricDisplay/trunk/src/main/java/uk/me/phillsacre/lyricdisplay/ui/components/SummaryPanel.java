@@ -85,6 +85,18 @@ public abstract class SummaryPanel extends JPanel implements SummaryPanelUI
 	_previewPanel.setVerse(item, verse);
     }
 
+    @Override
+    public int getSelectedIndex()
+    {
+	return _versesList.getSelectedIndex();
+    }
+
+    @Override
+    public void setSelectedIndex(int selectedIndex)
+    {
+	_versesList.setSelectedIndex(selectedIndex);
+    }
+
     /**
      * Attempt to set the presentation size to the approximately correct aspect
      * ratio (4:3).

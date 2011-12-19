@@ -12,6 +12,7 @@ import javax.swing.event.ListSelectionListener;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
 
+import uk.me.phillsacre.lyricdisplay.main.events.ControlEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.VerseEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.ui.models.VersesListModel;
@@ -27,6 +28,10 @@ public abstract class SummaryPanelController implements
 {
     public interface SummaryPanelUI
     {
+	int getSelectedIndex();
+
+	void setSelectedIndex(int selectedIndex);
+
 	String getSelectedVerse();
 
 	void addListSelectionListener(ListSelectionListener l);
@@ -67,6 +72,29 @@ public abstract class SummaryPanelController implements
 	});
 
 	EventBus.subscribe(VerseEvent.class, this);
+	if (_target == Target.LIVE)
+	{
+	    EventBus.subscribeStrongly(ControlEvent.class,
+		    new EventSubscriber<ControlEvent>() {
+		        @Override
+		        public void onEvent(ControlEvent event)
+		        {
+			    switch (event.getType()) {
+				case FORWARD:
+				    selectNextVerse();
+				    break;
+
+				case BACKWARD:
+				    selectPreviousVerse();
+				    break;
+
+				default:
+				    break;
+
+			    }
+			}
+		    });
+	}
     }
 
     public void init()
@@ -104,5 +132,29 @@ public abstract class SummaryPanelController implements
 	{
 	    setDisplayVerse(event.getText());
 	}
+    }
+
+    private void selectPreviousVerse()
+    {
+	int selectedIndex = _ui.getSelectedIndex();
+
+	if (selectedIndex > 0)
+	{
+	    selectedIndex -= 1;
+	}
+
+	_ui.setSelectedIndex(selectedIndex);
+    }
+
+    private void selectNextVerse()
+    {
+	int selectedIndex = _ui.getSelectedIndex();
+
+	if (selectedIndex < _versesListModel.getSize() - 1)
+	{
+	    selectedIndex += 1;
+	}
+
+	_ui.setSelectedIndex(selectedIndex);
     }
 }
