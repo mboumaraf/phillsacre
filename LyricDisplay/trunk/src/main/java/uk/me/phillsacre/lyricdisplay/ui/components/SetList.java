@@ -144,10 +144,7 @@ public class SetList extends JList<SetListItem>
 	    return;
 	}
 
-	if (index < _model.getSize() - 1)
-	{
-	    EventBus.publish(new ChangeSetListSelectionEvent(Target.LIVE, item));
-	}
+	EventBus.publish(new ChangeSetListSelectionEvent(Target.LIVE, item));
     }
 
     private void previousSetListItem()
