@@ -86,7 +86,6 @@ public class SetList extends JList<SetListItem>
 			        EventBus.publish(new ChangeSetListSelectionEvent(
 			                Target.PREVIEW, getSelectedValue()));
 			    }
-
 		        }
 		    }
 	        });
@@ -151,9 +150,9 @@ public class SetList extends JList<SetListItem>
     {
 	final int index = getSelectedIndex();
 
-	if (index > 1)
+	if (index > 1 || index == _model.getSize() - 1)
 	{
-	    setSelectedIndex(index - 2);
+	    setSelectedIndex(index - 2 < 0 ? 0 : index - 2);
 	    EventBus.publish(new ChangeSetListSelectionEvent(Target.LIVE,
 		    getSelectedValue()));
 	}

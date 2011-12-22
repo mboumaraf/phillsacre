@@ -121,7 +121,8 @@ public class LiveSummaryPanel extends SummaryPanel implements
 	}
     }
 
-    private static class ToggleLiveAction extends AbstractAction
+    private static class ToggleLiveAction extends AbstractAction implements
+	    EventSubscriber<DisplayLiveEvent>
     {
 	private static final long             serialVersionUID = -6421217351666380012L;
 
@@ -143,6 +144,8 @@ public class LiveSummaryPanel extends SummaryPanel implements
 		    "Toggle whether the live screen is displayed");
 	    putValue(SMALL_ICON,
 		    new ImageIcon(Utils.getImageURL("images/showlive.png")));
+
+	    EventBus.subscribe(DisplayLiveEvent.class, this);
 	}
 
 	@Override
@@ -150,15 +153,11 @@ public class LiveSummaryPanel extends SummaryPanel implements
 	{
 	    if (_live)
 	    {
-		hidePresentation();
-		putValue(SELECTED_KEY, false);
-		_live = false;
+		EventBus.publish(new DisplayLiveEvent(false));
 	    }
 	    else
 	    {
-		displayPresentation();
-		putValue(SELECTED_KEY, true);
-		_live = true;
+		EventBus.publish(new DisplayLiveEvent(true));
 	    }
 	}
 
@@ -179,7 +178,8 @@ public class LiveSummaryPanel extends SummaryPanel implements
 		}
 	    }
 
-	    EventBus.publish(new DisplayLiveEvent(false));
+	    putValue(SELECTED_KEY, false);
+	    _live = false;
 	}
 
 	private void displayPresentation()
@@ -195,7 +195,7 @@ public class LiveSummaryPanel extends SummaryPanel implements
 		{
 		    _frame.setUndecorated(false);
 		}
-		
+
 		_frame.setVisible(true);
 		_frame.setExtendedState(_frame.getExtendedState()
 		        | JFrame.MAXIMIZED_BOTH);
@@ -214,7 +214,21 @@ public class LiveSummaryPanel extends SummaryPanel implements
 		}
 	    }
 
-	    EventBus.publish(new DisplayLiveEvent(true));
+	    putValue(SELECTED_KEY, true);
+	    _live = true;
+	}
+
+	@Override
+	public void onEvent(DisplayLiveEvent event)
+	{
+	    if (event.isLive())
+	    {
+		displayPresentation();
+	    }
+	    else
+	    {
+		hidePresentation();
+	    }
 	}
     }
 }

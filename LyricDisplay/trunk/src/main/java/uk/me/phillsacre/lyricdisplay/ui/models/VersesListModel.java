@@ -63,11 +63,18 @@ public class VersesListModel extends AbstractListModel<String> implements
 	    return;
 	}
 
+	// Ignore if the 'new' item is the same as the current one.
+	final SetListItem item = event.getItem();
+	if (item.equals(_item))
+	{
+	    return;
+	}
+
 	int size = _verses.size();
 	_verses.clear();
 	fireContentsChanged(this, 0, size);
 
-	_item = event.getItem();
+	_item = item;
 
 	_verses.addAll(parseVerses(_item.getSong().getText()));
 	fireContentsChanged(this, 0, _verses.size());

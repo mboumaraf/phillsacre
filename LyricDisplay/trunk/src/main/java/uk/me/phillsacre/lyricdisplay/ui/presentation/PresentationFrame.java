@@ -10,6 +10,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -19,6 +21,7 @@ import org.bushe.swing.event.EventSubscriber;
 
 import uk.me.phillsacre.lyricdisplay.main.events.BlankScreenEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.ControlEvent;
+import uk.me.phillsacre.lyricdisplay.main.events.DisplayLiveEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.VerseEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
@@ -59,6 +62,20 @@ public class PresentationFrame extends JFrame implements EventSubscriber
 	    public void componentShown(ComponentEvent e)
 	    {
 		_presentation.repaint();
+	    }
+	});
+	addWindowListener(new WindowAdapter() {
+	    @Override
+	    public void windowClosing(WindowEvent e)
+	    {
+		EventBus.publish(new DisplayLiveEvent(false));
+	    }
+
+	    @Override
+	    public void windowClosed(WindowEvent e)
+	    {
+		// TODO Auto-generated method stub
+
 	    }
 	});
 	addMouseListener(new MouseAdapter() {
