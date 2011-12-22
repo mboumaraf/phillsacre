@@ -12,10 +12,12 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.ui.controllers.EditSongController;
 import uk.me.phillsacre.lyricdisplay.ui.controllers.EditSongController.EditSongUI;
+import uk.me.phillsacre.lyricdisplay.ui.utils.UpperCaseDocumentFilter;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.forms.builder.ButtonBarBuilder2;
@@ -67,6 +69,14 @@ public class EditSongDialog extends JDialog implements EditSongUI
 
 	builder.append("Copyright", BasicComponentFactory
 	        .createTextField(_controller.getModel("copyright")));
+
+	final JTextField songOrderField = BasicComponentFactory
+	        .createTextField(_controller.getModel("songOrder"));
+
+	UpperCaseDocumentFilter filter = new UpperCaseDocumentFilter();
+	filter.installFilter(songOrderField);
+
+	builder.append("Song Order", songOrderField, 5);
 
 	builder.appendRow(builder.getLineGapSpec());
 	builder.nextLine(2);

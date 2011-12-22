@@ -5,13 +5,18 @@ package uk.me.phillsacre.lyricdisplay.ui.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.bushe.swing.event.EventBus;
 import org.bushe.swing.event.EventSubscriber;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import uk.me.phillsacre.lyricdisplay.main.entities.Song;
 import uk.me.phillsacre.lyricdisplay.main.events.ChangeSetListSelectionEvent;
 import uk.me.phillsacre.lyricdisplay.main.events.utils.Target;
 import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
@@ -24,11 +29,14 @@ import uk.me.phillsacre.lyricdisplay.ui.models.entities.SetListItem;
 public class VersesListModel extends AbstractListModel<String> implements
         EventSubscriber<ChangeSetListSelectionEvent>
 {
-    private static final long serialVersionUID = 2969085267477573382L;
+    private static final long   serialVersionUID = 2969085267477573382L;
 
-    private final Target      _target;
-    private List<String>      _verses;
-    private SetListItem       _item;
+    private static final Logger LOG              = LoggerFactory
+	                                                 .getLogger(VersesListModel.class);
+
+    private final Target        _target;
+    private List<String>        _verses;
+    private SetListItem         _item;
 
     public VersesListModel(Target target)
     {
@@ -76,7 +84,7 @@ public class VersesListModel extends AbstractListModel<String> implements
 
 	_item = item;
 
-	_verses.addAll(parseVerses(_item.getSong().getText()));
+	_verses.addAll(parseVerses(_item.getSong()));
 	fireContentsChanged(this, 0, _verses.size());
     }
 
@@ -85,10 +93,49 @@ public class VersesListModel extends AbstractListModel<String> implements
 	return _item;
     }
 
-    private List<String> parseVerses(String text)
+    private List<String> parseVerses(Song song)
     {
-	String[] verses = text.split("\n\n");
+	String[] versesArr = song.getText().split("\n\n");
+	final String songOrder = song.getSongOrder();
 
-	return Arrays.asList(verses);
+	ArrayList<String> verses = new ArrayList<String>(
+	        Arrays.asList(versesArr));
+
+	if (StringUtils.isNotBlank(songOrder))
+	{
+	    HashMap<String, String> map = new HashMap<String, String>();
+
+	    for (String verse : verses)
+	    {
+		verse = verse.trim();
+
+		// Use the first line as the identifier.
+		String id = verse.substring(0, verse.indexOf('\n')).trim()
+		        .toUpperCase();
+
+		map.put(id, verse);
+		if (id.startsWith("VERSE "))
+		{
+		    map.put(id.replace("VERSE ", "V"), verse);
+		}
+		else if (id.equals("CHORUS"))
+		{
+		    map.put("C", verse);
+		}
+	    }
+
+	    verses.clear();
+
+	    String[] components = songOrder.split(" ");
+	    for (String component : components)
+	    {
+		verses.add(map.get(component));
+	    }
+	}
+
+	LOG.debug("Parsed {} verses for song: {}", verses.size(),
+	        song.getTitle());
+
+	return verses;
     }
 }

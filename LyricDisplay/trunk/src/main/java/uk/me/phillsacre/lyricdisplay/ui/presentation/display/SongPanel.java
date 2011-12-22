@@ -143,7 +143,7 @@ public class SongPanel implements DisplayPanel
 		footer.append("; ");
 	    }
 
-	    footer.append("Copyright © ").append(song.getCopyright());
+	    footer.append("Copyright \u00A9 ").append(song.getCopyright());
 	}
 
 	return footer.toString();

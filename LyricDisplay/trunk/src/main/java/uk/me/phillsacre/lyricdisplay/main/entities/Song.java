@@ -20,6 +20,7 @@ public class Song
     private Integer               _year;
     private String                _copyright;
     private String                _text;
+    private String                _songOrder;
 
     private PropertyChangeSupport _changeSupport;
 
@@ -39,6 +40,7 @@ public class Song
 	_copyright = song.getCopyright();
 	_author = song.getAuthor();
 	_text = song.getText();
+	_songOrder = song.getSongOrder();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener l)
@@ -181,5 +183,18 @@ public class Song
 
 	_changeSupport.firePropertyChange("copyright", oldValue, _copyright);
 
+    }
+
+    public String getSongOrder()
+    {
+	return _songOrder;
+    }
+
+    public void setSongOrder(String songOrder)
+    {
+	String oldValue = _songOrder;
+	_songOrder = songOrder;
+
+	_changeSupport.firePropertyChange("songOrder", oldValue, _songOrder);
     }
 }

@@ -23,4 +23,10 @@
 
 	</changeSet>
 
+	<changeSet id="tblSongs-songOrder" author="psacre">
+		<addColumn tableName="tblSongs">
+			<column name="song_order" type="varchar(255)" />
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

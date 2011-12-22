@@ -16,24 +16,32 @@
 		<result property="publisher" column="publisher" />
 		<result property="year" column="year" />
 		<result property="copyright" column="copyright" />
+		<result property="songOrder" column="song_order" />
 	</resultMap>
 
-	<select id="selectAll" resultMap="result"><![CDATA[
-		SELECT id, title, author, publisher, year, copyright, text
+	<sql id="all_columns">
+		SELECT id, title, author, publisher, year, copyright, text,
+		song_order
+	</sql>
+
+	<select id="selectAll" resultMap="result">
+		<include refid="all_columns" />
+	<![CDATA[
 		FROM tblSongs
 		ORDER BY title ASC
 	]]></select>
 
-	<select id="search" resultMap="result"><![CDATA[
-		SELECT id, title, author, publisher, year, copyright, text
+	<select id="search" resultMap="result">
+		<include refid="all_columns" />
+	<![CDATA[
 		FROM tblSongs s, FT_SEARCH_DATA(#value#, 0, 0) ft
 		WHERE ft.table = 'TBLSONGS' AND s.id = ft.keys[0]
 		ORDER BY title ASC
 	]]></select>
 
 	<insert id="insert" parameterClass="Song">
-		INSERT INTO tblSongs (title, author, publisher, year, copyright, text)
-		VALUES (#title#, #author#, #publisher#, #year#, #copyright#, #text#)
+		INSERT INTO tblSongs (title, author, publisher, year, copyright, text, song_order)
+		VALUES (#title#, #author#, #publisher#, #year#, #copyright#, #text#, #songOrder#)
 
 		<selectKey resultClass="int">
 			SELECT SCOPE_IDENTITY()
@@ -48,7 +56,8 @@
 			publisher = #publisher#,
 			year = #year#,
 			copyright = #copyright#,
-			text = #text#
+			text = #text#,
+			song_order = #songOrder#
 		WHERE
 			id = #id#
 	]]></update>
