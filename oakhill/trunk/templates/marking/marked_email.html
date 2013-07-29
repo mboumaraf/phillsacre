@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Marked Exercise</title>
+
+<style type="text/css">
+
+body {
+	font-family: tahoma, verdana, sans-serif;
+	font-size: 10pt;
+}
+
+table {
+	font-size: 1em;
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+table th {
+	font-weight: bold;
+	border-bottom: 3px double black;
+	background: #ccc;
+	padding: 3px;
+}
+
+table tr.even {
+	background: #eee;
+}
+
+.q_comment {
+	font-family: Cardo, Arial Unicode MS, times new roman, serif;
+	font-size: 11pt;
+}
+
+</style>
+
+</head>
+<body>
+
+<h1>Marked Exercise: {{ markedAnswer.answer.chapter.name }}</h1>
+
+<table>
+	<thead>
+		<tr>
+			<th>Question</th>
+			<th width="40%">Your Answer</th>
+			<th width="50%">Marker's Comments</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for mq in markedQuestions %}
+			<tr class="{{ loop.cycle('odd', 'even') }}">
+				<td>{{ mq.question.question.name }}</td>
+				<td>{{ mq.question.answer }}</td>
+				<td>
+					{% if mq.comment %}<p>{{ mq.comment }}</p>{% endif %}
+					<ul>
+						{% for c in mq.comments %}
+							<li class="q_comment">{{ c.comment.text }}</li>
+						{% endfor %}
+					</ul>
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+</body>
+</html>

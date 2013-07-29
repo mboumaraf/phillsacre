@@ -1,0 +1,29 @@
+{% extends("base.html") %}
+	
+{% block title %}Distance Learning Home{% endblock %}
+{% block content %}
+
+<p>You are logged in as: <strong>{{ user }}</strong> - <a href="{{ logout_url }}">Logout</a></p>
+
+{% if admin %}
+<h2>Administration</h2>
+
+<ul>
+	<li><a href="/admin/">Set up for online Greek tests and exercises</a></li>
+	<li><a href="/admin/statistics">View data about Greek exercise feedback</a></li>
+</ul>
+{% endif %}
+
+<h2>Marking</h2>
+
+<ul>
+	<li><a href="/marking/">Mark submitted Greek exercises</a></li>
+</ul>
+
+<h2>Greek Tests and Exercises</h2>
+
+<ul>
+	<li><a href="/exercises/">Submit an exercise</a></li>
+</ul>
+
+{% endblock %}

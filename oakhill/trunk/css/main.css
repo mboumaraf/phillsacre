@@ -1,0 +1,101 @@
+body {
+	font-family: tahoma, verdana, sans-serif;
+	font-size: 10pt;
+	background: #496C60;
+	padding-top: 10px;
+}
+
+div#container {
+	margin: auto;
+	width: 90%;
+	border: 2px solid black;
+	box-shadow: 5px 5px 3px #004C43;
+}
+
+div#header {
+	padding: 10px;
+	border-bottom: 3px dotted #E1DEAE;
+	background: white url(../i/oakhill.png) no-repeat right;
+}
+
+div#header h1 {
+	text-shadow: 2px 2px 2px #bbb;
+	width: 800px;
+}
+
+div#content {
+	padding: 5px;
+	background: white;
+}
+
+div#footer {
+	font-size: 0.8em;
+	border-top : 2px dotted #E1DEAE;
+	padding: 10px;
+	background: white;
+	color: #444;
+	text-align: center;
+}
+
+div#msg {
+	background: #8ECEFF;
+	color: black;
+	font-weight: bold;
+	text-align: center;
+	border: 1px solid #2F4454;
+	margin: 2px;
+	padding: 4px;
+}
+
+a { 
+	color: #007366;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+h1 {
+	font-family: arial, sans-serif;
+	font-size: 2.5em;
+	font-weight: bold;
+	color: #007366;
+}
+
+h2 {
+	color: #6DC4BC;
+	# border-bottom: 1px solid #6DC4BC;
+	text-decoration: underline;
+}
+
+table {
+	font-size: 1em;
+	border-collapse: collapse;
+	border: 1px solid black;
+}
+
+table th {
+	font-weight: bold;
+	border-bottom: 3px double black;
+	background: #ccc;
+	padding: 3px;
+}
+
+table tr.even {
+	background: #eee;
+}
+
+textarea.fullwidth, input[type="text"].fullwidth{
+	width: 100%;
+	box-sizing: border-box;
+}
+
+a.warn {
+	color: red;
+}
+
+.q_comment {
+	font-family: Cardo, Arial Unicode MS, times new roman, serif;
+	font-size: 11pt;
+}

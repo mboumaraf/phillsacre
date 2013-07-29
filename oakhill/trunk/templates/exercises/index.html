@@ -1,0 +1,28 @@
+{% extends("base.html") %}
+	
+{% block title %}Exercises{% endblock %}
+{% block content %}
+
+<p>[ <a href="/">Back Home</a> ]</p>
+
+<h2>Exercises Remaining</h2>
+
+<p>You have not yet submitted answers for the following chapters:</p>
+
+<ul>
+{% for chapter in chapters %}
+	<li><a href="/exercises/submit/{{chapter.key().id()}}">{{ chapter.name }}</a></li>
+{% endfor %}
+</ul>
+
+<h2>Exercises Completed</h2>
+
+<p>The most recent exercises completed are shown first.</p>
+
+<ul>
+{% for answer in completed %}
+	<li><strong>{{ answer.chapter.name }}</strong> (Submitted: {{ answer.submit_date|datetimeformat }})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

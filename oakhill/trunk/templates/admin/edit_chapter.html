@@ -1,0 +1,58 @@
+{% extends("base.html") %}
+
+{% block title %}Edit Duff Chapter Exercise{% endblock %}
+
+{% block content %}
+
+	<h2>Chapter: {{ chapter.name }}</h2>
+	
+	<p>[ <a href="/admin/">Back</a> ]</p>
+	
+	<form method="post" action="/admin/edit-chapter">
+	<input type="hidden" name="id" value="{{ chapter.key().id() }}" />
+	<p>Rename: <input type="text" name="name" value="{{ chapter.name }}" />
+	<input type="submit" value="Save" /></p>
+	</form>
+	
+	<h3>Questions</h3>
+	
+	<table>
+		<thead>
+			<tr>
+				<th></th>
+				<th>Number</th>
+				<th>Model Answer</th>
+				<th>Comments</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<form method="post" action="/admin/add-question">
+			<input type="hidden" name="chapter_id" value="{{ chapter.key().id() }}" />
+			<tr>
+				<td>New:</td>
+				<td><input type="text" name="name" size="3" /></td>
+				<td>
+					<input type="text" size="100" name="model_answer" />
+					<input type="submit" value="Add" />
+				</td>
+				<td></td>
+			</tr>
+			</form>
+		</tfoot>
+		<tbody>
+			{% for question in questions %}
+			<form method="post" action="/admin/update-question">
+			<input type="hidden" name="chapter_id" value="{{ chapter.key().id() }}" />
+			<input type="hidden" name="question_id" value="{{ question.key().id() }}" />
+			
+			<tr class="{{ loop.cycle('odd', 'even') }}">
+				<td>[<a class="warn" title="Delete Question {{ question.name }}" href="/admin/delete-question?chapter_id={{chapter.key().id()}}&id={{ question.key().id() }}">X</a>]</td>
+				<td><input type="text" name="name" size="3" value="{{ question.name }}" /></td>
+				<td><input type="text" name="modelAnswer" size="100" value="{{ question.modelAnswer }}" /></td>
+				<td><a href="/admin/edit-comments?chapter_id={{ chapter.key().id() }}&question_id={{ question.key().id() }}">View / Edit</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

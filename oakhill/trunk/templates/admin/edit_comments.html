@@ -1,0 +1,53 @@
+{% extends("base.html") %}
+
+{% block title %}Edit Comments{% endblock %}
+
+{% block content %}
+
+<h2>Comments for {{ chapter.name }} - {{ question.name }}</h2>
+
+<p>[ <a href="/admin/edit-chapter?id={{ chapter.key().id() }}">Back to {{ chapter.name }}</a> ]</p>
+
+{% if question.modelAnswer %}
+	<p>Model Answer: <strong>{{ question.modelAnswer }}</strong></p>
+{% endif %}
+
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="10%">Code</th>
+			<th>Comment</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<form method="post" action="/admin/add-comment">
+		<input type="hidden" name="chapter_id" value="{{ chapter.key().id() }}" />
+		<input type="hidden" name="question_id" value="{{ question.key().id() }}" />
+		<tr>
+			<td></td>
+			<td valign="top"><input type="text" size="3" name="code" /></td>
+			<td valign="top"><textarea class="q_comment fullwidth" name="text" rows="3"></textarea><input type="submit" value="Add" /></td>
+		</tr>
+		</form>
+	</tfoot>
+	<tbody>
+	{% for comment in comments %}
+		<form method="post" action="/admin/edit-comments">
+		<input type="hidden" name="chapter_id" value="{{ chapter.key().id() }}" />
+		<input type="hidden" name="question_id" value="{{ question.key().id() }}" />
+		<input type="hidden" name="comment_id" value="{{ comment.key().id() }}" />
+		<tr class="{{ loop.cycle('odd', 'even') }}">
+			<td>[<a onclick="return confirm('Are you sure you want to delete comment \'{{ comment.code }}?\'');" class="warn" title="Delete comment {{ comment.code }}" href="/admin/delete-comment/{{ chapter.key().id()}}/{{ question.key().id() }}/{{ comment.key().id() }}">X</a>]</td>
+			<td valign="top"><input type="text" size="3" name="code" value="{{ comment.code }}" /></td>
+			<td valign="top">
+				<textarea class="q_comment fullwidth" name="text" rows="3">{{ comment.text }}</textarea>
+				<input type="submit" value="Save" />
+			</td>
+		</tr>
+		</form>
+	{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

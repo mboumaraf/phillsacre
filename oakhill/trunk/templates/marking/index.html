@@ -1,0 +1,19 @@
+{% extends("base.html") %}
+	
+{% block title %}Marking Home{% endblock %}
+{% block content %}
+
+<p>[ <a href="/">Back Home</a> ]</p>
+
+<h2>Unmarked Exercises</h2>
+
+<p>The following exercises require marking:</p>
+
+<ul>
+{% for answer in marking_list %}
+	<li><strong><a href="/marking/mark/{{answer.key().id()}}">{{ answer.chapter.name }}</a></strong>
+	by {{ answer.student }} (submitted on {{ answer.submit_date|datetimeformat }})</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

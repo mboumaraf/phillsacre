@@ -1,0 +1,47 @@
+{% extends("base.html") %}
+	
+{% block title %}Mark Exercise{% endblock %}
+{% block content %}
+
+<p>[ <a href="/marking/">Back Home</a> ]</p>
+
+<h2>Marking: {{ answer.chapter.name }}</h2>
+
+<p>Submitted by <strong>{{ answer.student.email() }}</strong> on <strong>{{ answer.submit_date|datetimeformat }}</strong></p>
+
+<form method="post" action="/marking/mark/{{ answer.key().id() }}">
+
+<table>
+	<thead>
+		<tr>
+			<th>Question</th>
+			<th width="40%">Student's Answer</th>
+			<th width="50%">Marker's Comments</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for aq in answers %}
+		<tr class="{{ loop.cycle('odd', 'even') }}">
+			<td>{{ aq.question.name }}</td>
+			<td>{{ aq.answer }}</td>
+			<td>
+				<p><em>{{ aq.question.modelAnswer }}</em></p>
+				<input type="text" name="marker_comment_{{ aq.key().id() }}" class="fullwidth" />
+				<ol type="a">
+				{% for comment in aq.comments %}
+					<li><input type="checkbox" id="comment_{{ comment.key().id() }}" name="comment_{{ aq.key().id() }}" value="{{comment.key().id() }}" /><label class="q_comment" for="comment_{{ comment.key().id() }}">{{ comment.text }}</label></li>
+				{% endfor %}
+				</ol>
+			</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<p>General Comments:<br/><textarea name="general_comments" class="fullwidth" rows="3"></textarea></p>
+
+<p style="text-align:center;"><input type="submit" value="Complete" /></p>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends("base.html") %}
+	
+{% block title %}Exercise Statistics{% endblock %}
+{% block content %}
+	
+	<h2>Chapter Exercises Data</h2>
+	
+	<p>[ <a href="/">Back Home</a>] </p>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>Chapter</th>
+				<th>Question</th>
+				<th>Comment</th>
+				<th>Number</th>
+			</tr>
+		</thead>
+		{% for stat in stats %}
+			<tr class="{{ loop.cycle('odd', 'even') }}">
+				<td>{% if stat.chapter.name != last_chapter %}{{ stat.chapter.name }}{% endif %}</td>
+				<td>{% if stat.question.name != last_question %}{{ stat.question.name }}{% endif %}</td>
+				<td>{{ stat.comment.code }}</td>
+				<td>{{ stat.number }}</td>
+			</tr>
+			{% set last_chapter = stat.chapter.name %}
+			{% set last_question = stat.question.name %}
+		{% endfor %}
+		<tbody>
+		</tbody>
+	</table>
+	
+{% endblock %}

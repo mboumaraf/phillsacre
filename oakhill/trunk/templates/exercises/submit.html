@@ -1,0 +1,39 @@
+{% extends("base.html") %}
+	
+{% block title %}Submit Exercise{% endblock %}
+{% block content %}
+
+<h2>Exercise: {{ chapter.name }}</h2>
+
+<p>[ <a href="/exercises/">Back</a> ]</p>
+
+<form method="post" action="/exercises/submit/{{chapter.key().id()}}">
+
+<table>
+	<thead>
+		<tr>
+			<th>Question</th>
+			<th>Answer</th>
+		</tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<td colspan="2" align="right">
+				<input type="submit" value="Submit" />
+			</td>
+	</tfoot>
+	<tbody>
+		{% for question in questions %}
+			<tr class="{{ loop.cycle('odd', 'even') }}">
+				<td>{{ question.name }}</td>
+				<td><input type="text" size="100" name="answer_{{ question.key().id() }}" /></td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<p><strong>WARNING:</strong> Once you submit, you WILL NOT be able to change your answers.</p>
+
+</form>
+
+{% endblock %}

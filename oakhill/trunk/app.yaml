@@ -1,0 +1,24 @@
+application: oakhill-dl
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /css
+  static_dir: css
+- url: /i
+  static_dir: i
+
+- url: /admin/.*
+  script: greek_admin.application
+  login: admin
+- url: /.*
+  script: main.application
+  login: required
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
