@@ -10,7 +10,7 @@
 	<ul>
 	{% for chapter in chapters %}
 			<li><a href="/admin/edit-chapter?id={{ chapter.key().id() }}">{{ chapter.name }}</a>
-			[<a title="Delete '{{ chapter.name }}'" class="warn" href="/admin/delete-chapter?id={{ chapter.key().id() }}">X</a>]</li>
+			[<a onclick="return confirm('Are you sure you want to delete \'{{ chapter.name }}\'?');" title="Delete '{{ chapter.name }}'" class="warn" href="/admin/delete-chapter?id={{ chapter.key().id() }}">X</a>]</li>
 	{% endfor %}
 	</ul>
 	

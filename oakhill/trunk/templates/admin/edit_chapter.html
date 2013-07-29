@@ -46,7 +46,7 @@
 			<input type="hidden" name="question_id" value="{{ question.key().id() }}" />
 			
 			<tr class="{{ loop.cycle('odd', 'even') }}">
-				<td>[<a class="warn" title="Delete Question {{ question.name }}" href="/admin/delete-question?chapter_id={{chapter.key().id()}}&id={{ question.key().id() }}">X</a>]</td>
+				<td>[<a onclick="return confirm('Are you sure you want to delete question \'{{ question.name }}\'?');" class="warn" title="Delete Question {{ question.name }}" href="/admin/delete-question?chapter_id={{chapter.key().id()}}&id={{ question.key().id() }}">X</a>]</td>
 				<td><input type="text" name="name" size="3" value="{{ question.name }}" /></td>
 				<td><input type="text" name="modelAnswer" size="100" value="{{ question.modelAnswer }}" /></td>
 				<td><a href="/admin/edit-comments?chapter_id={{ chapter.key().id() }}&question_id={{ question.key().id() }}">View / Edit</a></td>
