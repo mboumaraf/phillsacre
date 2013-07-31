@@ -136,7 +136,7 @@ def save_answer(markedAnswer, answer, answers, request):
 
 class MainPage(webapp2.RequestHandler):
 	def get(self):
-		marking_list = DAnswer.all().filter('marked =', False).order('chapter')
+		marking_list = DAnswer.all().ancestor(get_answer_parent()).filter('marked =', False).order('chapter')
 		
 		template_values = {
 			'marking_list': marking_list

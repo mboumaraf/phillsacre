@@ -48,6 +48,12 @@ indexes:
 - kind: DAnswer
   ancestor: yes
   properties:
+  - name: marked
+  - name: chapter
+
+- kind: DAnswer
+  ancestor: yes
+  properties:
   - name: student
   - name: submit_date
     direction: desc
