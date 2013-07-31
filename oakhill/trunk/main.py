@@ -40,6 +40,7 @@ application = webapp2.WSGIApplication([
 	]),
 	routes.PathPrefixRoute('/marking', [
 		webapp2.Route('/', 'greek_marking.MainPage', 'marking-main'),
+		webapp2.Route('/save/<answer_id>', 'greek_marking.Save', 'marking-save'),
 		webapp2.Route('/mark/<answer_id>', 'greek_marking.Mark', 'marking-mark')
 	])
 ], debug=True)

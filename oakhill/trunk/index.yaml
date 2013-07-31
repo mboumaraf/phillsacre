@@ -35,6 +35,19 @@ indexes:
 - kind: DAnswer
   ancestor: yes
   properties:
+  - name: chapter
+  - name: marked
+  - name: submit_date
+
+- kind: DAnswer
+  ancestor: yes
+  properties:
+  - name: chapter
+  - name: submit_date
+
+- kind: DAnswer
+  ancestor: yes
+  properties:
   - name: student
   - name: submit_date
     direction: desc

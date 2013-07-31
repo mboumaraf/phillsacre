@@ -1,5 +1,24 @@
 {% extends("base.html") %}
+
+{% block head %}
+{{ super() }}
+
+<script>
+
+var answer_id = '{{ answer.key().id() }}';
+
+function go_next(question) {
+	$('#next_question').val(question);
 	
+	form = $('form[name=marking_form]');
+	$(form).prop('action', '/marking/save/' + answer_id);
+	form.submit();
+};
+
+</script>
+
+{% endblock %}
+
 {% block title %}Mark Exercise{% endblock %}
 {% block content %}
 
@@ -9,7 +28,11 @@
 
 <p>Submitted by <strong>{{ answer.student.email() }}</strong> on <strong>{{ answer.submit_date|datetimeformat }}</strong></p>
 
-<form method="post" action="/marking/mark/{{ answer.key().id() }}">
+<form name="marking_form" method="post" action="/marking/mark/{{ answer.key().id() }}">
+{% if nextAnswerID is not none %}
+<input type="hidden" name="next" value="{{ nextAnswerID }}" />
+<input type="hidden" name="next_question" id="next_question" value="" />
+{% endif %}
 
 <table>
 	<thead>
@@ -25,20 +48,28 @@
 			<td>{{ aq.question.name }}</td>
 			<td>{{ aq.answer }}</td>
 			<td>
+				<a name="question-{{ aq.question.name }}"></a>
 				<p><em>{{ aq.question.modelAnswer }}</em></p>
-				<input type="text" name="marker_comment_{{ aq.key().id() }}" class="fullwidth" />
+				<input type="text" name="marker_comment_{{ aq.key().id() }}" class="fullwidth" value="{{ aq.comment }}" />
 				<ol type="a">
 				{% for comment in aq.comments %}
-					<li><input type="checkbox" id="comment_{{ comment.key().id() }}" name="comment_{{ aq.key().id() }}" value="{{comment.key().id() }}" /><label class="q_comment" for="comment_{{ comment.key().id() }}">{{ comment.text }}</label></li>
+					<li>
+						<input type="checkbox" {% if comment.key().id() in selected %}checked="checked"{% endif %} id="comment_{{ comment.key().id() }}" name="comment_{{ aq.key().id() }}" value="{{comment.key().id() }}" />
+						<label class="q_comment" for="comment_{{ comment.key().id() }}">{{ comment.text }}</label>
+					</li>
 				{% endfor %}
 				</ol>
+				
+				{% if nextAnswerID is not none %}
+				<input type="button" value="Next &gt;" onclick="go_next('{{ aq.question.name }}');" />
+				{% endif %}
 			</td>
 		</tr>
 		{% endfor %}
 	</tbody>
 </table>
 
-<p>General Comments:<br/><textarea name="general_comments" class="fullwidth" rows="3"></textarea></p>
+<p>General Comments:<br/><textarea name="general_comments" class="fullwidth" rows="3">{{ markedAnswer.comment }}</textarea></p>
 
 <p style="text-align:center;"><input type="submit" value="Complete" /></p>
 
