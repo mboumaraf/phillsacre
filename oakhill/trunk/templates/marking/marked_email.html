@@ -50,7 +50,7 @@ table tr.even {
 	<tbody>
 		{% for mq in markedQuestions %}
 			<tr class="{{ loop.cycle('odd', 'even') }}">
-				<td>{{ mq.question.question.name }}</td>
+				<td align="center">{{ mq.question.question.name }}</td>
 				<td>{{ mq.question.answer }}</td>
 				<td>
 					{% if mq.comment %}<p>{{ mq.comment }}</p>{% endif %}

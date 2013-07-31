@@ -45,7 +45,7 @@ function go_next(question) {
 	<tbody>
 		{% for aq in answers %}
 		<tr class="{{ loop.cycle('odd', 'even') }}">
-			<td>{{ aq.question.name }}</td>
+			<td align="center">{{ aq.question.name }}</td>
 			<td>{{ aq.answer }}</td>
 			<td>
 				<a name="question-{{ aq.question.name }}"></a>
