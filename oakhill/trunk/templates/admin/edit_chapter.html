@@ -1,6 +1,24 @@
 {% extends("base.html") %}
 
 {% block title %}Edit Duff Chapter Exercise{% endblock %}
+{% block head %}
+{{ super() }}
+
+<script>
+
+$(function() {
+	var input = $('tbody input[name=name]:last')
+	if (input.length > 0) {
+		var highest = parseInt(input.val());
+		if (!isNaN(highest)) {
+			$('tfoot input[name=name]').val(highest + 1);
+		}
+	}
+});
+
+</script>
+
+{% endblock %}
 
 {% block content %}
 
