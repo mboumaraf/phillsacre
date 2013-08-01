@@ -13,6 +13,10 @@ def get_chapter_parent():
 def get_answer_parent():
 	return db.Key.from_path('Answer', 'answer')
 
+# Parent for reference data
+def get_ref_parent():
+	return db.Key.from_path('Ref', 'ref')
+
 class DChapter(db.Model):
 	name = db.StringProperty(required=True)
 
@@ -48,6 +52,9 @@ class DMarkedQuestion(db.Model):
 class DMarkedQuestionComment(db.Model):
 	comment = db.ReferenceProperty(DQuestionComment, required=True)
 
+# Default comments which markers can choose for an answer
+class DDefaultComments(db.Model):
+	comment = db.StringProperty()
 
 class DStatistic(db.Model):
 	chapter = db.ReferenceProperty(DChapter, required=True)

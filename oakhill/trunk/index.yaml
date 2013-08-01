@@ -63,6 +63,11 @@ indexes:
   properties:
   - name: name
 
+- kind: DDefaultComments
+  ancestor: yes
+  properties:
+  - name: comment
+
 - kind: DQuestion
   ancestor: yes
   properties:

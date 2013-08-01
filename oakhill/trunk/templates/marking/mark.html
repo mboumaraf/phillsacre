@@ -3,14 +3,151 @@
 {% block head %}
 {{ super() }}
 
+<style type="text/css">
+
+div#comment_selector {
+	position: absolute;
+	background: white;
+	border: 1px solid black;
+	display: none;
+	padding: 3px;
+	box-sizing: border-box;
+}
+
+div#comment_selector ul {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
+}
+
+div#comment_selector ul > li {
+	margin-left: 0px;
+	padding: 2px;
+	cursor: pointer;
+}
+
+div#comment_selector ul > li.selected {
+	background: #C2DEFF;
+	color: #00408A;
+}
+
+</style>
+
+<script src="/marking/default-comments"></script>
 <script>
 
 var answer_id = '{{ answer.key().id() }}';
 
+// -1 for UP; 1 for DOWN
+function move_selected(direction) {
+	var li = $('div#comment_selector li.selected');
+	var idx = -1;
+	var nextIdx = -1;
+	var maxIdx = $('div#comment_selector li').length - 1;
+	
+	if (li.length > 0) {
+		idx = li.prevAll('li').length;
+		
+		if (direction < 0) {
+			nextIdx = (idx > 0) ? idx - 1: maxIdx;
+		}
+		else {
+			nextIdx = (idx < maxIdx) ? idx + 1 : 0;
+		}
+		
+		$('div#comment_selector li.selected').removeClass('selected');
+	}
+	else {
+		if (direction < 0) {
+			// next idx should be at the end of the list
+			nextIdx = maxIdx;
+		}
+		else {
+			// start of the list
+			nextIdx = 0;
+		}
+	}
+	
+	$('div#comment_selector li:nth-child(' + (nextIdx + 1) + ')').addClass('selected');
+};
+
+function choose_selected(input) {
+	var li = $('div#comment_selector li.selected');
+	if (li.length > 0) {
+		var text = li.contents().filter(function() { return this.nodeType == 3; }).text();
+		$(input).val(text);
+		
+		$('div#comment_selector').css('display', 'none');
+	}
+};
+
+$(function() {
+	$('form[name=marking_form] input[type=text]').focus(function(e) {
+		var div = $('div#comment_selector');
+		div.empty();
+		
+		var input = $(this);
+		
+		var ul = $(document.createElement('ul'));
+		
+		for (var i=0; i < comments.length; i++) {
+			var comment = comments[i];
+			
+			li = $('<li>' +  comment + '</li>');
+			li.hover(function() { $(this).addClass('selected'); }, function() { $(this).removeClass('selected'); });
+			
+			// Stupid JavaScript scope...
+			(function(c) {
+				li.click(function() { 
+					input.val(c);
+					// No need to hide DIV - will get picked up by document click handler
+				});
+			})(comment);
+			
+			ul.append(li);
+		}
+		
+		div.append(ul);
+
+		var offset = $(this).offset();
+		var offsetTop = offset.top + $(this).outerHeight();
+		var offsetLeft = offset.left + (($(this).outerWidth() - $(this).width()) / 2);
+		
+		div.css('display', 'block');
+		div.css('width', $(this).width());
+		div.css('left', offsetLeft + 'px');
+		div.css('top', offsetTop + 'px');
+	});
+	
+	$('form[name=marking_form] input[type=text]').keydown(function(e) {
+		switch (e.which) {
+			case 38: // up
+				move_selected(-1);
+				e.preventDefault();
+				break;
+			case 40: // down
+				move_selected(1);
+				e.preventDefault();
+				break;
+			case 13: // enter
+				choose_selected(e.target);
+				e.preventDefault(); // this will prevent the form submitting - shouldn't be a problem; user will have to use submit button
+		}
+	});
+	
+	$('form[name=marking_form] input[type=text]').click(function(e) {
+		e.stopPropagation();
+	});
+	
+	$(document).click(function() {
+		$('#comment_selector').css('display', 'none');
+	});
+});
+
 function go_next(question) {
 	$('#next_question').val(question);
 	
-	form = $('form[name=marking_form]');
+	var form = $('form[name=marking_form]');
 	$(form).prop('action', '/marking/save/' + answer_id);
 	form.submit();
 };
@@ -74,5 +211,7 @@ function go_next(question) {
 <p style="text-align:center;"><input type="submit" value="Complete" /></p>
 
 </form>
+
+<div id="comment_selector"></div>
 
 {% endblock %}

@@ -196,6 +196,37 @@ class Statistics(webapp2.RequestHandler):
 		
 		send_template(self.response, 'admin/statistics.html', template_values)
 
+class EditMarkersComments(webapp2.RequestHandler):
+	def get(self):
+		comments = DDefaultComments.all().ancestor(get_ref_parent()).order('comment')
+		
+		template_values = {
+			'comments': comments
+		}
+		
+		send_template(self.response, 'admin/markers_comments.html', template_values)
+	
+	def post(self):
+		id = self.request.get('id')
+		comment = self.request.get('comment')
+		
+		if id:
+			entity = DDefaultComments.get_by_id(int(id), get_ref_parent())
+		else:
+			entity = DDefaultComments(parent=get_ref_parent())
+		
+		entity.comment = comment
+		entity.put()
+		
+		self.redirect(uri_for('markers-comments'))
+
+class DeleteMarkersComment(webapp2.RequestHandler):
+	def get(self, comment_id):
+		entity = DDefaultComments.get_by_id(int(comment_id), get_ref_parent())
+		entity.delete()
+		
+		self.redirect(uri_for('markers-comments'))
+
 application = webapp2.WSGIApplication([
 	routes.PathPrefixRoute('/admin', [
 		webapp2.Route('/', MainPage, 'greek-admin-main'),
@@ -207,6 +238,8 @@ application = webapp2.WSGIApplication([
 		webapp2.Route('/edit-comments', EditComments, 'edit-comments'),
 		webapp2.Route('/add-comment', AddComment, 'add-comment'),
 		webapp2.Route('/delete-comment/<chapter_id>/<question_id>/<comment_id>', DeleteComment, 'delete-comment'),
-		webapp2.Route('/statistics', Statistics, 'statistics')
+		webapp2.Route('/statistics', Statistics, 'statistics'),
+		webapp2.Route('/markers-comments', EditMarkersComments, 'markers-comments'),
+		webapp2.Route('/markers-comments/delete/<comment_id>', DeleteMarkersComment, 'markers-comment-delete')
 	])
 ], debug=True)

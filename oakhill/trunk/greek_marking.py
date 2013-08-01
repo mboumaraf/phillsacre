@@ -3,10 +3,12 @@ from main import JINJA_ENVIRONMENT
 from duff_entities import *
 
 from webapp2 import uri_for
+from webapp2_extras import json
 from google.appengine.api import mail
 
 import webapp2
 import logging
+import time
 
 # Retrieve the 'next' answer ID
 # assumes a marker goes through and marks one question at a time
@@ -222,3 +224,14 @@ class Mark(webapp2.RequestHandler):
 		update_statistics(markedAnswer)
 
 		self.redirect(uri_for('marking-main'))
+
+class Comments(webapp2.RequestHandler):
+	def get(self):
+		q = DDefaultComments.all().ancestor(get_ref_parent())
+		comments = []
+		
+		for c in q:
+			comments.append(c.comment)
+
+		self.response.content_type = 'application/javascript'
+		self.response.write('var comments = ' + json.encode(comments))
