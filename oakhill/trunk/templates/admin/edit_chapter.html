@@ -8,12 +8,16 @@
 
 $(function() {
 	var input = $('tbody input[name=name]:last')
+	var highest = 0;
+	
 	if (input.length > 0) {
-		var highest = parseInt(input.val());
-		if (!isNaN(highest)) {
-			$('tfoot input[name=name]').val(highest + 1);
+		var temp = parseInt(input.val());
+		if (!isNaN(temp)) {
+			highest = temp;
 		}
 	}
+	
+	$('tfoot input[name=name]').val(highest + 1);
 });
 
 </script>

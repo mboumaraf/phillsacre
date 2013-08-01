@@ -10,14 +10,17 @@ var chars = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q'
 
 $(function() {
 	var input = $('tbody input[name=code]:last');
+	var nextChar = 'a';
 	
 	if (input.length > 0) {
 		var code = input.val();
 		var idx = jQuery.inArray(code, chars);
-		var nextChar = chars[idx + 1];
+		nextChar = chars[idx + 1];
 		
-		$('tfoot input[name=code]').val(nextChar);
+		
 	}
+	
+	$('tfoot input[name=code]').val(nextChar);
 });
 
 </script>
