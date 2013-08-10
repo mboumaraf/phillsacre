@@ -34,6 +34,7 @@ div#comment_selector ul > li.selected {
 </style>
 
 <script src="/marking/default-comments"></script>
+<script src="/js/jquery-ui.min.js"></script>
 <script>
 
 var answer_id = '{{ answer.key().id() }}';
@@ -113,10 +114,11 @@ $(function() {
 		var offsetTop = offset.top + $(this).outerHeight();
 		var offsetLeft = offset.left + (($(this).outerWidth() - $(this).width()) / 2);
 		
-		div.css('display', 'block');
 		div.css('width', $(this).width());
 		div.css('left', offsetLeft + 'px');
 		div.css('top', offsetTop + 'px');
+		
+		div.show('slide', { direction: 'up' }, 300);
 	});
 	
 	$('form[name=marking_form] input[type=text]').keydown(function(e) {
@@ -140,7 +142,7 @@ $(function() {
 	});
 	
 	$(document).click(function() {
-		$('#comment_selector').css('display', 'none');
+		$('#comment_selector').hide('slide', { direction: 'up' }, 300);
 	});
 });
 
