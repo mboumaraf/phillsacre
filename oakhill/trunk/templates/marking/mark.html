@@ -185,10 +185,12 @@ function go_next(question) {
 		{% for aq in answers %}
 		<tr class="{{ loop.cycle('odd', 'even') }}">
 			<td align="center">{{ aq.question.name }}</td>
-			<td>{{ aq.answer }}</td>
+			<td>
+				<p><em>{{ aq.question.modelAnswer }}</em></p>
+				<p>{{ aq.answer }}</p>
+			</td>
 			<td>
 				<a name="question-{{ aq.question.name }}"></a>
-				<p><em>{{ aq.question.modelAnswer }}</em></p>
 				<input type="text" name="marker_comment_{{ aq.key().id() }}" class="fullwidth" value="{{ aq.comment }}" />
 				<ol type="a">
 				{% for comment in aq.comments %}
